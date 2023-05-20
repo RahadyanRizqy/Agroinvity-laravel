@@ -1,1 +1,2 @@
 *.sqlite*
+/original_migration
