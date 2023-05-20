@@ -19,4 +19,4 @@ yarn-error.log
 /.vscode
 /database/original_migration/
 /public/image/
-/resources/tested
+/resources/tested/
