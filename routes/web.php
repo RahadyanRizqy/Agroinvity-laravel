@@ -3,6 +3,7 @@
 use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
+use Illuminate\Contracts\Session\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,20 +32,41 @@ Route::get('/feature', function() {
 //     return view('login');
 // });
 
-Route::get('/dashboard', function() {
-    return view('dashboard', compact('id'));
-});
-
-Route::get('/login', function() { 
+Route::get('login', function() { 
     return view("usersession/login");
 });
 
-Route::get('/register', function() { 
+Route::get('register', function() { 
     return view("usersession/register");
 });
 
-Route::resource('articles', ArticleController::class);
+Route::get('dashboard', function() {
+    return view('dashboard')->with('section', 'main');
+});
 
+// Route::get('dashboard/1', function() {
+//     return view('dashboard')->with('mainSection', 1);
+// });
+
+// Route::get('dashboard/2', function() {
+//     return view('dashboard')->with('mainSection', 2);
+// });
+
+// Route::get('dashboard/3', function() {
+//     return view('dashboard')->with('mainSection', 3);
+// });
+
+// Route::get('dashboard?mainSection={mainSection}', function($mainSection) {
+//     return view('dashboard')->with('mainSection', $mainSection);
+// })->where('mainSection', '[0-3]');
+
+
+Route::get('dashboard', function () {
+    $section = request()->query('section');
+    return view('dashboard')->with('section', $section);
+});
+
+Route::resource('articles', ArticleController::class);
 // Route::get('');
 
 // Route::get('/session', function() {

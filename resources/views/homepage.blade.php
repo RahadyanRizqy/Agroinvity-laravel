@@ -1,4 +1,4 @@
-@extends('main')
+@extends('master')
 
 @section('title', 'Agroinvity')
 
@@ -33,8 +33,8 @@
         </ul>
         
         <div class="validation">
-          <a href="/login">Daftar</a>
-          <a href="/register" class="button-secondary">Masuk</a>
+          {{-- <a href="/login">Daftar</a>
+          <a href="/register" class="button-secondary">Masuk</a> --}}
           <button onclick="location.href='register'" class="button-primary">Daftar</button>
           <button onclick="location.href='login'" class="button-secondary">Masuk</button>
         </div>
