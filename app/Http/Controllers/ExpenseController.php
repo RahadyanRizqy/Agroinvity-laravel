@@ -18,17 +18,54 @@ class ExpenseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($type_id)
     {
-        return view('forms');
+        return view('forms.expenses.create', ['type_id' => $type_id]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required',
+    //         'quantity' => 'required',
+    //         'price_per_qty' => 'required',
+    //     ]);
+    
+    //     $input = $request->all();
+
+    //     $input['account_fk'] = 2;
+    //     $input['expense_type_fk'] = 1;
+    
+    //     Expenses::create($input);
+     
+    //     return redirect()->route('section.expenses', ['type_id' => 1]);
+    //         // ->with('success','Expenses stored successfully.');
+    // }
+
+    public function store(Request $request, $type_id)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'quantity' => 'required',
+            'price_per_qty' => 'required',
+        ]);
+        
+        $input = $request->all();
+
+        $input['account_fk'] = 2;
+        $input['expense_type_fk'] = $type_id;
+        
+        try {
+            Expenses::create($input);
+    
+            return redirect()->route('section.expenses', ['type_id' => $type_id]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'An error occurred. Please try again.']);
+        }
+            // ->with('success','Expenses stored successfully.');
     }
 
     /**
@@ -60,6 +97,9 @@ class ExpenseController extends Controller
      */
     public function destroy(Expenses $expenses)
     {
-        //
+        $expenses->delete();
+     
+        return redirect()->route('section.expenses', ['type_id' => 1])
+            ->with('success','article deleted successfully');
     }
 }

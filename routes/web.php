@@ -35,16 +35,6 @@ Route::get('/super', function() {
     return view('super');
 });
 
-// Route::get('/forms', function() {
-//     return view('forms/product_form');
-// })->name('forms.insert');
-
-
-
-// Route::get('/login', function() {
-//     return view('login');
-// });
-
 Route::get('login', function() { 
     return view("usersession/login");
 });
@@ -57,35 +47,15 @@ Route::get('dashboard', [DashboardController::class, 'showDashboard'])->name('se
 Route::get('dashboard/article', [DashboardController::class, 'indexArticle'])->name('section.article');
 Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->name('section.report');
 Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
-
-
-// Route::get('dashboard/material', [DashboardController::class, 'indexMaterial'])->name('section.material');
-// Route::get('dashboard/operational', [DashboardController::class, 'indexOperational'])->name('section.operational');
 Route::get('dashboard/production', [DashboardController::class, 'indexProduction'])->name('section.production');
-
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 
-// Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'createExpense'])->name('expenses.create');
-
-// Route::resource('dashboard/material', ExpenseController::class);
-
-// Route::get('dashboard/1', function() {
-//     return view('dashboard')->with('mainSection', 1);
-// });
-
-// Route::get('dashboard/2', function() {
-//     return view('dashboard')->with('mainSection', 2);
-// });
-
-// Route::get('dashboard/3', function() {
-//     return view('dashboard')->with('mainSection', 3);
-// });
-
-// Route::get('dashboard?mainSection={mainSection}', function($mainSection) {
-//     return view('dashboard')->with('mainSection', $mainSection);
-// })->where('mainSection', '[0-3]');
-
 Route::resource('articles', ArticleController::class);
+
+// CRUD PENGELUARAN
+Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
+Route::post('expenses/{type_id}/store', [ExpenseController::class, 'store'])->name('expenses.store');
+// Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');
 
 // Route::get('dashboard', function () {
 //     $section = request()->query('section');

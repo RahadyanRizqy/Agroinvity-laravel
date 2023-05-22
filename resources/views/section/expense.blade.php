@@ -4,7 +4,7 @@
     @elseif ($expenses->first()->expense_type_fk == 2)
         <h1 class="title">Operasional</h1>
     @endif
-    <button class="btn btn-primary mb-3" onClick="inputForm({{$expenses->first()->expense_type_fk}})">+ Tambah Product</button>
+    <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $expenses->first()->expense_type_fk])}}">+ Tambah Bahan Baku</a>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
