@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('account_types', function (Blueprint $table) {
-            $table->tinyIncrements('account_type_id');
+            $table->id();
             $table->string("account_type_name");
         });
     }

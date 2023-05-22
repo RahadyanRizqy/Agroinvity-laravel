@@ -17,10 +17,10 @@ return new class extends Migration
             $table->text('text');
             $table->string('image');
             $table->timestamps();
-            $table->unsignedTinyInteger("account_fk")->default(1);
+            $table->unsignedBigInteger("account_fk")->default(1);
 
             $table->foreign("account_fk")
-                ->references("account_id")
+                ->references("id")
                 ->on("accounts")
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->tinyIncrements("account_id");
+            $table->id();
             $table->string("fullname", 255);
             $table->string("email", 255)->unique();
             $table->string("password", 255);
@@ -25,17 +25,17 @@ return new class extends Migration
             $table->timestamp("end_date")->default(DB::raw('DATE_ADD(created_at, INTERVAL 30 DAY)'));
             $table->integer("remaining_days")->default(DB::raw('DATEDIFF(end_date, CURDATE())'));
             
-            $table->unsignedTinyInteger('account_type_fk')->default(2);
-            $table->unsignedTinyInteger('account_rel_fk')->nullable();
+            $table->unsignedBigInteger('account_type_fk')->default(2);
+            $table->unsignedBigInteger('account_rel_fk')->nullable();
 
             $table->foreign('account_type_fk')
-                ->references('account_type_id')
+                ->references('id')
                 ->on('account_types')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
             $table->foreign('account_rel_fk')
-                ->references('account_id')
+                ->references('id')
                 ->on('accounts')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

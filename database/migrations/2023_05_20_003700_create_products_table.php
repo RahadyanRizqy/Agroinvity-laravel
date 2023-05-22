@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->increments("product_id");
+            $table->id();
             $table->string("name", 255)->unique();
             $table->integer("price_per_qty");
             $table->timestamps();
@@ -20,11 +20,11 @@ return new class extends Migration
             $table->integer("sold_products");
             $table->integer("stock_products")->virtualAs("total_qty-sold_products");
 
-            $table->unsignedTinyInteger("account_fk");
+            $table->unsignedBigInteger("account_fk");
 
             // foreign
             $table->foreign("account_fk")
-                ->references("account_id")
+                ->references("id")
                 ->on("accounts")
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

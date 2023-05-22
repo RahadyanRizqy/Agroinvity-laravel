@@ -503,6 +503,17 @@ main .content-data .chart::-webkit-scrollbar {
 	color:#333;
 }
 
+main .modal.fade .modal-dialog {
+	transition: transform 0.3s ease, opacity 0.3s ease;
+	transform: translate(0, -25%);
+	opacity: 0;
+}
+
+main .modal.fade.show .modal-dialog {
+	transform: translate(0, 0);
+	opacity: 1;
+}
+
 
 
 @media screen and (max-width: 768px) {

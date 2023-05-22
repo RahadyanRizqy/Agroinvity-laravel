@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class AccountTypes extends Model
 {
     use HasFactory;
+
+    public function accountGet() {
+        return $this->hasMany(Accounts::class, 'account_type_fk');
+    }
 }

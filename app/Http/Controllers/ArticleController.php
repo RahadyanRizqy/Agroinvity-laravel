@@ -17,7 +17,6 @@ class ArticleController extends Controller
     
         return view('articles.index',compact('articles'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
-            // ->with('i', 1);
     }
 
     /**
@@ -62,16 +61,6 @@ class ArticleController extends Controller
 
         return view('articles.show',['article' => $article]);
     }
-
-    // public function show(Request $request)
-    // {
-    //     $article = Articles::find($input[0]);
-
-    //     return view('articles.show', [
-    //         'article' => $,
-    //         'currentPage' => $input[1],
-    //     ]);
-    // }
 
     /**
      * Show the form for editing the specified resource.

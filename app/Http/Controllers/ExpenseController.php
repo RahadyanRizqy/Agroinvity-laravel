@@ -20,7 +20,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        //
+        return view('forms');
     }
 
     /**

@@ -18,7 +18,7 @@
     <!-- My Style -->
     @stack('style')
     <!-- Logo Title -->
-    <link rel="icon" type="image/x-icon" href="assets/icons/logo.ico">
+    <link rel="icon" type="image/x-icon" href="/assets/icons/logo.ico">
     <title>@yield('title')</title>
 </head>
 <body>

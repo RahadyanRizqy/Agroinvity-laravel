@@ -12,23 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('expenses', function (Blueprint $table) {
-            $table->increments("expense_id");
+            $table->id();
             $table->string("name", 255)->unique();
             $table->integer("quantity");
             $table->integer("price_per_qty");
             $table->timestamps();
-            $table->unsignedTinyInteger("account_fk");
-            $table->unsignedTinyInteger("expense_type_fk");
+            $table->unsignedBigInteger("account_fk");
+            $table->unsignedBigInteger("expense_type_fk");
 
             // foreign
             $table->foreign("account_fk")
-                ->references("account_id")
+                ->references("id")
                 ->on("accounts")
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
             $table->foreign("expense_type_fk")
-                ->references("expense_type_id")
+                ->references("id")
                 ->on("expense_types")
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
