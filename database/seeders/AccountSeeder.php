@@ -120,8 +120,7 @@ class AccountSeeder extends Seeder
                     'phone_number' => $accountSeed['phone_number'][$i],
                     'account_type_fk' => $accountSeed['account_type_fk'][$i],
                     'account_rel_fk' => $accountSeed['account_rel_fk'][$i],
-                    'created_at' => $accountSeed['created_at'][$i],
-                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'registered_at' => $accountSeed['created_at'][$i],
                     // 'status' => $accountSeed['status'][$i],
                 ]
             );

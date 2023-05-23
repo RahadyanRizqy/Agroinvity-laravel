@@ -9,9 +9,15 @@ class Accounts extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'fullname', 'email', 'password', 'phone_number', 'account_type_fk', 'account_rel_fk', 'created_at', 'updated_at'
+    // protected $fillable = [
+    //     'fullname', 'email', 'password', 'phone_number', 'account_type_fk', 'account_rel_fk', 'created_at', 'updated_at'
+    // ];
+
+    protected $guarded = [
+        'id'
     ];
+
+    public $timestamps = false;
 
     public function parentAcc() {
         return $this->belongsTo(Accounts::class, 'account_rel_fk');

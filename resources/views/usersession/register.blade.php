@@ -11,43 +11,37 @@
     <div class="row g-0">
         <div class="col-md-6 g-0">
             <div class="form-right-side d-flex justify-content-center align-items-center">
-                <form action="register" method="POST">
+                <form action="{{ route('register.store')}}" method="POST">
+                    @csrf
                     <div class="form-group">
-                        <label for="fullNameInput" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control" name="fullNameInput" placeholder="cth: Arcueid Brunestud" required>
+                        <label for="fullname" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" name="fullname" placeholder="cth: Arcueid Brunestud" required>
                     </div>
                     <div class="form-group">
-                        <label for="phoneNumberInput" class="form-label">Nomor Handphone</label>
-                        <input type="number" class="form-control" name="phoneNumberInput" placeholder="cth: 62xxxxxxxxxxx" required>
+                        <label for="phone_number" class="form-label">Nomor Handphone</label>
+                        <input type="number" class="form-control" name="phone_number" placeholder="cth: 62xxxxxxxxxxx" required>
                     </div>
                     <div class="form-group">
-                        <label for="mailInput" class="form-label">Alamat email</label>
-                        <input type="email" class="form-control" name="mailInput" aria-describedby="emailHelp" placeholder="cth: arcueidbrune@stud.com" required>
+                        <label for="email" class="form-label">Alamat email</label>
+                        <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="cth: arcueidbrune@stud.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="passwordInput" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="passwordInput" placeholder="cth: arc2512" required>
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="cth: arc2512" required>
                     </div>
-                        <button type="submit" class="btn form-button btn-success" name="regist-btn">Daftar</button>
+                        <button type="submit" class="btn form-button btn-success">Daftar</button>
                     <div>
                         <span class="ask">Sudah punya akun? <a href="login">Masuk</a> sekarang juga!</span>
                     </div>
+                    @if ($errors->any())
                     <div class="mt-2">
-                        {{-- <?php
-                            // $pageWasRefreshed = isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0';
-
-                            // if($pageWasRefreshed) {
-                            //     $accountExist = False;
-                            // } 
-                            // else {
-                                if ($accountExist == True) {
-                                    echo "<span class=\"warning\" style=\"color: white;\">Akun sudah ada, Silahkan login!</span>";
-                                } else if ($accountExist == False) {
-                                    echo "<span class=\"warning\" style=\"color: white;\"></span>";
-                                }
-                            // }
-                        ?> --}}
+                        {{ $errors->first()}}
+                        <span class="warning" style="color: white;">Akun sudah ada, Silahkan login!</span>
                     </div>
+                    {{-- <div class="mt-1 col-md-12">
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="#">reset password</a></span>
+                    </div> --}}
+                    @endif
                 </form>
             </div>
         </div>

@@ -9,8 +9,12 @@ class Products extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name', 'price_per_qty', 'total_qty', 'created_at', 'update_at', 'total_qty', 'sold_products', 'stock_products', 'account_fk'
+    // protected $fillable = [
+    //     'name', 'price_per_qty', 'total_qty', 'created_at', 'update_at', 'total_qty', 'sold_products', 'stock_products', 'account_fk'
+    // ];
+
+    protected $guarded = [
+        'id'
     ];
 
     public function productOf() {

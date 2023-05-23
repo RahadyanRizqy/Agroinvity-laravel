@@ -26,20 +26,25 @@ class ProductSeeder extends Seeder
         array('Tempe', 20, 1000, 5, 3),
         array('Jamur Krispi', 7, 10000, 2, 2),
         array('Bubuk Teh', 5, 10000, 2, 3),
-
-        // user = 3
-    );
+        array('Bubuk Kacang', 5, 10000, 2, 2),
+        array('Kaldu Jamur', 5, 10000, 2, 3),
+        array('Nugget Tempe', 5, 10000, 2, 2),
+        array('Permen Kopi', 5, 10000, 2, 3),
+        array('Kering Tempe', 5, 10000, 2, 2),
+        array('Kaldu Bawang', 5, 10000, 2, 3),
+        array('Cabe Bubuk', 5, 10000, 2, 2),
+        array('Nugget Tahu', 5, 10000, 2, 2),
+    
+        );
 
     for ($i = 0; $i < count($productSeed); $i++) {
-        DB::table('products')->insert(
-            [
+        DB::table('products')->insert([
                 'name' => $productSeed[$i][0],
                 'total_qty' => $productSeed[$i][1],
                 'price_per_qty' => $productSeed[$i][2],
                 'sold_products' => $productSeed[$i][3],
                 'account_fk' => $productSeed[$i][4],
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-                'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
             ]
         );
     }   

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 use Illuminate\Contracts\Session\Session;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -35,13 +37,11 @@ Route::get('/super', function() {
     return view('super');
 });
 
-Route::get('login', function() { 
-    return view("usersession/login");
-});
+// SESI
+Route::resource('login', LoginController::class);
+Route::resource('register', RegisterController::class);
 
-Route::get('register', function() { 
-    return view("usersession/register");
-});
+
 
 Route::get('dashboard', [DashboardController::class, 'showDashboard'])->name('section.main');
 Route::get('dashboard/article', [DashboardController::class, 'indexArticle'])->name('section.article');
@@ -49,12 +49,19 @@ Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->nam
 Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
 Route::get('dashboard/production', [DashboardController::class, 'indexProduction'])->name('section.production');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
-
-Route::resource('articles', ArticleController::class);
+Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 
 // CRUD PENGELUARAN
 Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
 Route::post('expenses/{type_id}/store', [ExpenseController::class, 'store'])->name('expenses.store');
+Route::delete('expenses/{expense}/delete', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
+Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->name('expenses.update');
+
+// CRUD PEMASUKAN
+
+Route::resource('articles', ArticleController::class);
+// Route::resource('expenses',ExpenseControl;ler::class);
 // Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');
 
 // Route::get('dashboard', function () {

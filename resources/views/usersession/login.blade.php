@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-6 g-0">
             <div class="form-right-side d-flex justify-content-center align-items-center">
-                <form action="login" method="POST">
+                <form action="{{ route('login.store') }}" method="POST">
                     <div class="form-group">
                         <label for="mailInput" class="form-label">Alamat email</label>
                         <input type="email" class="form-control" name="mailInput" aria-describedby="emailHelp" placeholder="Masukkan email anda" required>

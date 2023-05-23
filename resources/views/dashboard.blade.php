@@ -59,7 +59,7 @@
       </div>
     </form>
     <div class="profile">
-      <img src="/assets/img/pm.png" alt="">
+      <img src="/assets/img/account.png" alt="">
       <ul class="profile-link">
         <li><a href="#"><i class='bx bxs-user-circle icon' ></i> Profile</a></li>
         <!-- <li><a href="#"><i class='bx bxs-cog' ></i> Settings</a></li> -->

@@ -15,56 +15,6 @@ class ExpenseSeeder extends Seeder
      */
     public function run(): void
     {
-        $countExpense = 15;
-        
-        // $expenseSeed = array(
-        //     'fullname' => [
-        //         'Biji Kopi', 
-        //         'Jamur', 
-        //         'Apel', 
-        //         'Biji Wijen', 
-        //         'Biji Unta',
-        //         'Daun Teh',
-        //     ],
-        //     'email' => [
-        //         'sitikhoirunisak@mail.net',
-        //         'ekahas@mail.net',
-        //         'ilhamhibatul@mail.net',
-        //         'radenrizqy@mail.net',
-        //         'rezaocta@mail.net',
-        //     ],
-        //     'password' => [
-        //         'khoirunnisak',
-        //         'ekahaswidya',
-        //         'ilhamhibatul',
-        //         'radenrizqy',
-        //         'rezaocta'
-        //     ],
-        //     'phone_number' => [
-        //         6287745960427,
-        //         6283845979969,
-        //         62895410873321,
-        //         6288804897436,
-        //         6282131959759,
-    
-        //     ],
-        //     'account_type_fk' => [
-        //         1,
-        //         2,
-        //         2,
-        //         3,
-        //         3,
-        //     ],
-        //     'account_rel_fk' => [
-        //         null,
-        //         null,
-        //         null,
-        //         2,
-        //         3,
-        //     ]
-        // );
-
-
         $expenseSeed = array(
                 // nama, qty, harga, user, tipe
 
@@ -75,6 +25,9 @@ class ExpenseSeeder extends Seeder
             array('Biji Kacang 250g', 8, 17500, 2, 1),
             array('Benih Jamur 50g', 7, 24000, 3, 1),
             array('Kokoa 1kg', 6, 35000, 2, 1),
+            array('Tepung 1kg', 6, 33500, 3, 1),
+            array('Garam 1g', 20, 55000,2,1 ),
+
 
             // Operasional
             array('Wajan', 4, 7000, 3, 2),
@@ -83,6 +36,10 @@ class ExpenseSeeder extends Seeder
             array('Gas LPG 1kg', 7, 87500, 2, 2),
             array('Blue Gas 5kg', 19, 180000, 3, 2),
             array('Pestisida Marshal 250g', 28, 100000, 2, 2),
+            array('Minyak Goreng 1kg', 20, 34500, 3, 2),
+            array('Minyak Ikan Dorang 1kg', 15, 34550, 2, 2),
+            array('Minyak Kelapa 2kg', 16, 34500, 3, 2),
+            array('Minyak Curha 1kg', 7, 34500, 2, 2),
         );
 
         for ($i = 0; $i < count($expenseSeed); $i++) {
@@ -94,7 +51,6 @@ class ExpenseSeeder extends Seeder
                     'account_fk' => $expenseSeed[$i][3],
                     'expense_type_fk' => $expenseSeed[$i][4],
                     'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]
             );
         }

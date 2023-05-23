@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Accounts;
 use Illuminate\Http\Request;
 
-class AccountController extends Controller
+class LoginController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return view('usersession.login');
     }
 
     /**

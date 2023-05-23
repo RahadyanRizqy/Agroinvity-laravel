@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,11 @@ return new class extends Migration
             $table->string("password", 255);
             $table->bigInteger("phone_number");
             $table->boolean("status")->default(true);
-            $table->timestamps();
-            
+            $table->timestamp("registered_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            // $table->timestamp("created_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            // $table->timestamp("updated_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
             $table->timestamp("date_now")->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-            $table->timestamp("end_date")->default(DB::raw('DATE_ADD(created_at, INTERVAL 30 DAY)'));
+            $table->timestamp("end_date")->default(DB::raw('DATE_ADD(registered_at, INTERVAL 30 DAY)'));
             $table->integer("remaining_days")->default(DB::raw('DATEDIFF(end_date, CURDATE())'));
             
             $table->unsignedBigInteger('account_type_fk')->default(2);
