@@ -23,7 +23,7 @@
     <img src="/assets/img/logo2.png" width="50" height="50" alt=""><span>AGROINVITY</span>
   </a>
   <ul class="side-menu">
-    <li><a href="{{ route('section.main')}} " class="active"><i class='bx bxs-dashboard icon' ></i> Dashboard</a></li>
+    <li><a href="{{ route('section.main')}} " class="active"><i class='bx bxs-dashboard icon' ></i>Dashboard</a></li>
     <li>
       <a href="#"><i class='bx bxs-data icon'></i> Pendataan <i class='bx bx-chevron-right icon-right' ></i></a>
       <ul class="side-dropdown">
@@ -61,9 +61,9 @@
     <div class="profile">
       <img src="/assets/img/account.png" alt="">
       <ul class="profile-link">
-        <li><a href="#"><i class='bx bxs-user-circle icon' ></i> Profile</a></li>
+        <li><a href="{{ route('dashboard.profile')}}"><i class='bx bxs-user-circle icon' ></i> Profile</a></li>
         <!-- <li><a href="#"><i class='bx bxs-cog' ></i> Settings</a></li> -->
-        <li><a href="#"><i class='bx bxs-log-out-circle' ></i> Logout</a></li>
+        <li><a href="{{ route('session.destroy')}}"><i class='bx bxs-log-out-circle' ></i> Logout</a></li>
       </ul>
     </div>
   </nav>

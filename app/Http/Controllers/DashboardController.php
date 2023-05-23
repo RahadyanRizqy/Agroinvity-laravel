@@ -7,12 +7,13 @@ use App\Models\Expenses;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ArticleController;
 use App\Models\Products;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function showDashboard() # SHOW
     {
-        return view('dashboard', ['section' => 'main']);
+        return view('dashboard', ['section' => 'main', 'accountId' => Auth::id()]);
     }
 
     public function indexExpense($type_id) {
@@ -26,22 +27,6 @@ class DashboardController extends Controller
                 ->with('i', (request()->input('page', 1) - 1) * 10);
         }
     }
-
-    // public function indexMaterial()
-    // {
-    //     $expenses = Expenses::where('expense_type_fk', 1)->paginate(10);
-
-    //     return view('dashboard', ['expenses' => $expenses, 'section' => 'material'])
-    //         ->with('i', (request()->input('page', 1) - 1) * 10);
-    // }
-
-    // public function indexOperational()
-    // {
-    //     $expenses = Expenses::where('expense_type_fk', 2)->paginate(10);
-
-    //     return view('dashboard', ['expenses' => $expenses, 'section' => 'material'])
-    //         ->with('i', (request()->input('page', 1) - 1) * 10);
-    // }
 
     public function indexArticle() # SHOW
     {
@@ -65,5 +50,16 @@ class DashboardController extends Controller
     public function indexCalculator()
     {
         return view('dashboard', ['section' => 'calculator']);
+    }
+
+    public function dashboardLogout(Request $request)
+    {
+        Auth::logout();
+ 
+        $request->session()->invalidate();
+    
+        $request->session()->regenerateToken();
+    
+        return redirect('/');
     }
 }

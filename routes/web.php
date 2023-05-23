@@ -41,7 +41,7 @@ Route::get('/super', function() {
 Route::resource('login', LoginController::class);
 Route::resource('register', RegisterController::class);
 
-
+// DASHBOARD
 
 Route::get('dashboard', [DashboardController::class, 'showDashboard'])->name('section.main');
 Route::get('dashboard/article', [DashboardController::class, 'indexArticle'])->name('section.article');
@@ -50,7 +50,8 @@ Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator
 Route::get('dashboard/production', [DashboardController::class, 'indexProduction'])->name('section.production');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
-
+Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
+Route::get('dashboard/profile', function() { return view('forms/account');})->name('dashboard.profile');
 // CRUD PENGELUARAN
 Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
 Route::post('expenses/{type_id}/store', [ExpenseController::class, 'store'])->name('expenses.store');
@@ -61,6 +62,10 @@ Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->n
 // CRUD PEMASUKAN
 
 Route::resource('articles', ArticleController::class);
+
+// FORBIDDEN ACCESS
+
+Route::get('forbidden', function() { return view('forbidden'); });
 // Route::resource('expenses',ExpenseControl;ler::class);
 // Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');
 

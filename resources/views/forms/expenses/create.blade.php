@@ -2,7 +2,6 @@
 
 @section('title', 'Menambah Data Bahan Baku')
 
-
 @push('style')
 <style>
     body {

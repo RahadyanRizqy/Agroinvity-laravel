@@ -36,7 +36,14 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
- 
+            
+            // dd($request);
+            // dd(Accounts::where('id', Auth::id())->get());
+            // return redirect()->intended('dashboard')
+            // ->with([
+            //     'accountId' => Auth::id(),
+            //   ]);
+
             return redirect()->intended('dashboard');
         }
  
@@ -73,6 +80,6 @@ class LoginController extends Controller
      */
     public function destroy(Accounts $accounts)
     {
-        //
+        
     }
 }

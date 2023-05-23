@@ -1,10 +1,11 @@
 <main>
   <h1 class="title">Dashboard</h1>
-  <ul class="breadcrumbs">
-    <li><a href="#">Home</a></li>
+  <h5 class="greet breadcrumbs">Selamat datang {{ Auth::id() }}</h5>
+  {{-- <ul class="breadcrumbs">
+    <li><a href="#">Selamat datang {{ Auth::id() }}</a></li>
     <li class="divider">/</li>
     <li><a href="#" class="active">Dashboard</a></li>
-  </ul>
+  </ul> --}}
   <div class="info-data">
     <div class="card">
       <div class="head">

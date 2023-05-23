@@ -32,7 +32,7 @@
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" name="password" placeholder="Masukkan password anda" required>
                     </div>
-                        <button type="submit" class="btn form-button btn-success" name="login-btn">Masuk</button>
+                        <button type="submit" class="btn form-button btn-success">Masuk</button>
                     <div>
                         <span class="ask">Belum punya akun? <a href="register">Daftar</a> sekarang juga!</span>
                     </div>
