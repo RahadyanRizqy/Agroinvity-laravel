@@ -35,12 +35,11 @@
                     </div>
                     @if ($errors->any())
                     <div class="mt-2">
-                        {{ $errors->first()}}
                         <span class="warning" style="color: white;">Akun sudah ada, Silahkan login!</span>
                     </div>
-                    {{-- <div class="mt-1 col-md-12">
-                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="#">reset password</a></span>
-                    </div> --}}
+                    <div class="mt-1 col-md-12">
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="wa.me/6288804897436">kontak admin</a></span>
+                    </div>
                     @endif
                 </form>
             </div>

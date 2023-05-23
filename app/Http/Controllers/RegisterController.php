@@ -29,60 +29,26 @@ class RegisterController extends Controller
      */
     public function store(Request $request)
     {
-        // $input = $request->validate([
-        //     'fullname' => 'required|max:255',
-        //     'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-        //     'phone_number' => 'required|numeric|digits_between:12,20',
-        //     'password' => 'required|min:2|max:255',
-        // ]);
-
-        // $input['password'] = Hash::make($input['password']);
-        // $input['created_at'] = 
-        
-        $input = $request->validate([
-            'fullname' => 'required|max:255',
-            'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-            'phone_number' => 'required|numeric|digits_between:12,20',
-            'password' => 'required|min:2|max:255',
-        ]);
-
-        $input['password'] = Hash::make($input['password']);
-        
-        // $input = $request->all();
-
-        // $input['account_fk'] = Hash::make();
-
-        $expenses = Accounts::where('email', $input['email'])->exists();
-        if ($expenses) {
-            return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
-        }
-        Accounts::create($input);
-        return redirect()->route('login.index');
-
-        // try {
-        //     $input = $request->validate([
-        //         'fullname' => 'required|max:255',
-        //         'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-        //         'phone_number' => 'required|numeric|digits_between:12,20',
-        //         'password' => 'required|min:2|max:255',
-        //     ]);
-
-        //     $input['password'] = Hash::make($input['password']);
-            
-        //     // $input = $request->all();
+        try {
+            $input = $request->validate([
+                'fullname' => 'required|max:255',
+                'email' => 'required|email:dns|min:2|max:255|unique:accounts',
+                'phone_number' => 'required|numeric|digits_between:10,20',
+                'password' => 'required|min:2|max:255',
+            ]);
     
-        //     // $input['account_fk'] = Hash::make();
-
-        //     $expenses = Accounts::where('email', $input['email'])->exists();
-        //     if ($expenses) {
-        //         return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
-        //     }
-        //     Accounts::create($input);
-        //     return redirect()->route('login.index');
-        //     // return redirect()->route('dashboard', ['type_id' => $type_id]);
-        // } catch (\Exception $e) {
-        //     return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
-        // }
+            $input['password'] = Hash::make($input['password']);
+        
+            $accounts = Accounts::where('email', $input['email'])->exists();
+            if ($accounts) {
+                return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
+            }
+            Accounts::create($input);
+            return redirect()->route('login.index');
+            // return redirect()->route('dashboard', ['type_id' => $type_id]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi dengan benar'])->withInput();
+        }
     }
 
     /**

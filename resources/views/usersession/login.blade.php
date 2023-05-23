@@ -21,36 +21,40 @@
         </div>
         <div class="col-md-6 g-0">
             <div class="form-right-side d-flex justify-content-center align-items-center">
+                
                 <form action="{{ route('login.store') }}" method="POST">
+                    @csrf
                     <div class="form-group">
-                        <label for="mailInput" class="form-label">Alamat email</label>
-                        <input type="email" class="form-control" name="mailInput" aria-describedby="emailHelp" placeholder="Masukkan email anda" required>
+                        <label for="email" class="form-label">Alamat email</label>
+                        <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Masukkan email anda" required>
                     </div>
                     <div class="form-group">
-                        <label for="passwordInput" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="passwordInput" placeholder="Masukkan password anda" required>
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Masukkan password anda" required>
                     </div>
                         <button type="submit" class="btn form-button btn-success" name="login-btn">Masuk</button>
                     <div>
                         <span class="ask">Belum punya akun? <a href="register">Daftar</a> sekarang juga!</span>
                     </div>
+                    @if(session()->has('loginError'))
                     <div class="mt-2">
-                        {{-- <?php
-                            // $pageWasRefreshed = isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0';
-
-                            // if($pageWasRefreshed) {
-                            //     $accountExist = False;
-                            // } 
-                            // else {
-                                if ($accountExist == False) {
-                                    echo "<span style=\"color: white;\">Akun tidak ditemukan / atau salah password!</span>" . "<br>";
-                                    echo "<span style=\"color: white;\">Silahkan daftar / hubungi kontak di homepage!</span>" . "<br>";
-                                } else if ($accountExist == True) {
-                                    echo "<span class=\"warning\" style=\"color: white;\"></span>";
-                                }
-                            // }
-                        ?> --}}
+                        <span class="warning" style="color: white;">{{session('loginError')}}</span>
                     </div>
+                    <div class="mt-1 col-md-12">
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="wa.me/6288804897436">kontak admin</a></span>
+                    </div>
+                    @endif
+                    {{-- @if ($errors->any())
+                    <div class="mt-2">
+                        <span class="warning" style="color: white;">Akun tidak ada/salah password!</span>
+                    </div>
+                    <div class="mt-1 col-md-12">
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="wa.me/6288804897436">kontak admin</a></span>
+                    </div>
+                    {{-- <div class="mt-1 col-md-12">
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="#">reset password</a></span>
+                    </div> --}}
+                    {{-- @endif --}}
                 </form>
             </div>
         </div>
