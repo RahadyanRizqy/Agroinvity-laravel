@@ -48,5 +48,7 @@
     <p>
         403 | AKSES TERLARANG
     </p>
-    <span> {{ dd(Auth::check()) }}</span>
+    {{-- <span> {{ dd(Auth::user()->load('accountType')->accountType->account_type_name) }}</span> --}}
+    <span>{{ dd(Auth::user()->fullname )}}</span>
+    {{-- RELATION N+1 SOLVED --}}
 @endsection

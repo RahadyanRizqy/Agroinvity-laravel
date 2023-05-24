@@ -1,8 +1,8 @@
 <main>
   <h1 class="title">Dashboard</h1>
-  <h5 class="greet breadcrumbs">Selamat datang {{ Auth::id() }}</h5>
+  <h5 class="greet">Selamat datang {{ Auth::user()->fullname }}!</h5>
   {{-- <ul class="breadcrumbs">
-    <li><a href="#">Selamat datang {{ Auth::id() }}</a></li>
+    <li><a href="#">Selamat datang {{ Auth::user()->fullname }}</a></li>
     <li class="divider">/</li>
     <li><a href="#" class="active">Dashboard</a></li>
   </ul> --}}

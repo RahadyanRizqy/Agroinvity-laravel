@@ -6,6 +6,7 @@ use App\Models\Articles;
 use App\Models\Expenses;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ArticleController;
+use App\Models\Accounts;
 use App\Models\Products;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,12 @@ class DashboardController extends Controller
     }
 
     public function indexExpense($type_id) {
-        $expenses = Expenses::where('expense_type_fk', $type_id)->paginate(10);
+        // $expenses = Expenses::where('expense_type_fk', $type_id)
+        //     ->where('account_fk', Auth::id())->get();
+        $expenses = Accounts::with('ownExpense.expenseType')
+            ->find(Auth::id())
+            ->ownExpense
+            ->where('expenseType.id', $type_id);
 
         if ($type_id == 1) {
             return view('dashboard', ['expenses' => $expenses, 'section' => 'expense'])
@@ -36,7 +42,7 @@ class DashboardController extends Controller
     }
 
     public function indexProduction() {
-        $products = Products::all();
+        $products = Accounts::with('ownProduct')->find(Auth::id())->ownProduct;
         return view('dashboard', ['productions' => $products, 'section' => 'production'])
             ->with('i', (request()->input('page', 1) - 1) * 15);
 

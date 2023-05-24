@@ -292,6 +292,11 @@ main .breadcrumbs li a {
 main .breadcrumbs li a {
 	color: var(--green2);
 }
+
+main .greet {
+	color: var(--green1);
+}
+
 main .breadcrumbs li a.active,
 main .breadcrumbs li.divider {
 	color: var(--dark-grey);

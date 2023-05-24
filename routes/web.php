@@ -49,7 +49,7 @@ Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->nam
 Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
 Route::get('dashboard/production', [DashboardController::class, 'indexProduction'])->name('section.production');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
-Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
+// Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
 Route::get('dashboard/profile', function() { return view('forms/account');})->name('dashboard.profile');
 // CRUD PENGELUARAN

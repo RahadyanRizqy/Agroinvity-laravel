@@ -45,8 +45,9 @@ class LoginController extends Controller
             //   ]);
 
             return redirect()->intended('dashboard');
+            // return redirect()->intended('forbidden');
         }
- 
+
         return back()->with('loginError', 'Akun tidak ada/salah password.');
 
     }
