@@ -44,17 +44,6 @@
                         <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="wa.me/6288804897436">kontak admin</a></span>
                     </div>
                     @endif
-                    {{-- @if ($errors->any())
-                    <div class="mt-2">
-                        <span class="warning" style="color: white;">Akun tidak ada/salah password!</span>
-                    </div>
-                    <div class="mt-1 col-md-12">
-                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="wa.me/6288804897436">kontak admin</a></span>
-                    </div>
-                    {{-- <div class="mt-1 col-md-12">
-                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="#">reset password</a></span>
-                    </div> --}}
-                    {{-- @endif --}}
                 </form>
             </div>
         </div>

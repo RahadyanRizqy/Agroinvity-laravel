@@ -75,26 +75,27 @@
 <div class="content">
     <div class="form-container">
         <div class="edit-form col-4">
-            <form id="account-crud-form" action="{{ route('accounts.store')}}" method="post">
+            <form id="account-crud-form" action="{{ route('accounts.update', $account->id )}}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <div class="form-group">
                     <label for="fullname" class="form-label">Nama Akun</label>
-                    <input type="text" class="form-control" name="fullname" placeholder="cth: Arcueid Brunestud" value="{{ old('fullname') }}">
+                    <input type="text" class="form-control" name="fullname" placeholder="cth: Arcueid Brunestud" value="{{ $account->fullname }}">
                 </div>
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" name="email" placeholder="cth: arcueidbrunestud@gmail.com" value="{{old('email')}}">
+                    <input type="text" class="form-control" name="email" placeholder="cth: arcueidbrunestud@gmail.com" value="{{ $account->email }}">
                 </div>
                 <div class="form-group">
                     <label for="phone_number" class="form-label">Nomor HP</label>
-                    <input type="number" class="form-control" name="phone_number" placeholder="cth: 6281225120012" name="priceInput" value="{{ old('phone_number')}}">
+                    <input type="number" class="form-control" name="phone_number" placeholder="cth: 6281225120012"  value="{{ $account->phone_number }}">
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
                 </div>
-                <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
-                <a class="btn btn-danger" href="{{ route('accounts.index')}}">Batal</a>
+                <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
+                <a class="btn btn-danger" href="{{ route('section.main')}}">Batal</a>
             </form>
         </div>
     </div>

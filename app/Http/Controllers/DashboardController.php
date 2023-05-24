@@ -68,4 +68,9 @@ class DashboardController extends Controller
     
         return redirect('/');
     }
+
+    public function dashboardProfile() {
+        return view('forms.accounts.edit')
+            ->with('account', Accounts::where('id', Auth::id())->get()->first());
+    }
 }

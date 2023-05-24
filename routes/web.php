@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
@@ -52,7 +53,7 @@ Route::get('dashboard/products', [DashboardController::class, 'indexProduction']
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 // Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
-Route::get('dashboard/profile', function() { return view('forms/account');})->name('dashboard.profile');
+Route::get('dashboard/profile', [DashboardController::class, 'dashboardProfile'])->name('dashboard.profile');
 
 // CRUD PENGELUARAN
 Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
@@ -71,10 +72,11 @@ Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->n
 
 Route::resource('products', ProductController::class);
 
+Route::resource('dashboard/accounts', AccountController::class);
 
 // CRUD PEMASUKAN
 
-Route::resource('articles', ArticleController::class);
+Route::resource('dashboard/articles', ArticleController::class);
 
 // FORBIDDEN ACCESS
 
