@@ -43,15 +43,15 @@
             <td>{{ $product->price_per_qty }}</td>
             <td>{{ $product->sold_products }}</td>
             <td>{{ $product->stock_products }}</td>
-            <td>{{ $product->created_at }}</td>
+            <td>{{ $product->stored_at }}</td>
             <td>
-                <form action="{{ route('articles.destroy',1) }}" method="POST">
+                <form action="{{ route('products.destroy',$product->id) }}" method="POST">
                     
                     {{-- <a class="btn btn-info" href="{{ route('articles.show', $article->id) }}">Show</a> --}}
-                    <a class="btn btn-info" href="{{ route('articles.show', 1) }}">Show</a>
+                    {{-- <a class="btn btn-info" href="{{ route('articles.show', 1) }}">Show</a> --}}
                     
       
-                    <a class="btn btn-primary" href="{{ route('articles.edit', 1) }}">Edit</a>
+                    <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Edit</a>
                     
                     @csrf
                     @method('DELETE')

@@ -53,11 +53,11 @@
                   
                   {{-- <a class="btn btn-info" href="{{ route('articles.show', $article->id) }}">Show</a> --}}
                   {{-- <a class="btn btn-info" href="{{ route('ex.show', 1) }}">Show</a> --}}
-                  <a class="btn btn-primary" href="{{ route('articles.edit', 1) }}">Edit</a>
+                  <a class="btn btn-primary" href="{{ route('expenses.edit', $expense->id) }}">Edit</a>
                   @csrf
                   @method('DELETE')
                   
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="submit" class="btn btn-danger">Hapus</button>
               </form>
           </td>
       </tr>

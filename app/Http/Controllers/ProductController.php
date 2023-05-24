@@ -62,7 +62,7 @@ class ProductController extends Controller
             }
             
             Products::create($input);
-            return redirect()->route('section.production')->with('success','Produk berhasil diinput');;
+            return redirect()->route('section.production')->with('success','Produk berhasil diinput');
             
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
@@ -82,24 +82,44 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Products $products)
+    public function edit(Products $product)
     {
-        //
+        return view('forms.incomes.edit', ['product' => $product]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Products $products)
+    public function update(Request $request, Products $product)
     {
-        //
+        try {
+            
+            $input = $request->validate([
+                'name' => 'required',
+                'total_qty' => 'required',
+                'sold_products' => 'required',
+                'price_per_qty' => 'required',
+            ]);
+              
+            $product->update($input);
+    
+            return redirect()->route('section.production')
+                ->with('success','Data sudah diubah');
+        
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $products)
+    public function destroy(Products $product)
     {
-        //
+        $product->delete();
+        return redirect()->route('section.production')
+            ->with('success','Data berhasil dihapus');
     }
 }

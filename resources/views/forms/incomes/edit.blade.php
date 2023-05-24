@@ -1,10 +1,6 @@
 @extends('master')
 
-@if ($expense->expense_type_fk == 1)
-    @section('title', 'Mengubah Data Bahan Baku')
-@elseif ($expense->expense_type_fk == 2)
-    @section('title', 'Mengubah Data Operasional')
-@endif
+@section('title', 'Mengubah Data Produk')
 
 @push('style')
 <style>
@@ -50,7 +46,6 @@
 @endpush
 
 <div class="sweetalert">
-    {{ $message = ""}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if ($errors->any())
     <script>
@@ -79,29 +74,27 @@
 <div class="content">
     <div class="form-container">
         <div class="edit-form col-4">
-            <form id="registration-form" action="{{ route('expenses.update', $expense->id)}}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('products.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
-                    @if($expense->expense_type_fk == 1)
-                        <label for="name" class="form-label">Nama Bahan Baku</label>
-                    @elseif($expense->expense_type_fk == 2)
-                        <label for="name" class="form-label">Nama Operasional</label>
-                    @else
-                        <label for="name" class="form-label">Ini Ngebug</label>
-                    @endif
-                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" value="{{ $expense->name }}">
+                    <label for="name" class="form-label">Nama Produk: </label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Daun Teh 1kg" value="{{$product->name}}">
                 </div>
                 <div class="form-group">
-                    <label for="quantity" class="form-label">Jumlah: </label>
-                    <input type="number" class="form-control" name="quantity" placeholder="cth: 2" value="{{ $expense->quantity }}">
+                    <label for="total_qty" class="form-label">Jumlah: </label>
+                    <input type="number" class="form-control" name="total_qty" placeholder="cth: 2" value="{{$product->total_qty}}">
+                </div>
+                <div class="form-group">
+                    <label for="sold_products" class="form-label">Produk Terjual: </label>
+                    <input type="number" class="form-control" name="sold_products" placeholder="cth: 20" value="{{$product->sold_products}}">
                 </div>
                 <div class="form-group">
                     <label for="price_per_qty" class="form-label">Harga: </label>
-                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" value="{{ $expense->price_per_qty }}">
+                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 50000" value="{{$product->price_per_qty}}">
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
-                <a class="btn btn-danger" href="{{ route('section.expenses', $expense->expense_type_fk) }}">Batal</a>
+                <a class="btn btn-danger" href="{{ route('section.production') }}">Batal</a>
             </form>
         </div>
     </div>

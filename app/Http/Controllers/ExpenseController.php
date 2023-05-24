@@ -130,17 +130,34 @@ class ExpenseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Expenses $expenses, $type_id)
+    public function edit(Expenses $expense)
     {
-        return view('forms.expenses.create', ['type_id' => $type_id]);
+        return view('forms.expenses.edit', ['expense' => $expense]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Expenses $expenses)
+    public function update(Request $request, Expenses $expense)
     {
-        //
+        try {
+            
+            $input = $request->validate([
+                'name' => 'required',
+                'quantity' => 'required',
+                'price_per_qty' => 'required',
+            ]);
+              
+            $expense->update($input);
+    
+            return redirect()->route('section.expenses', ['type_id' => $expense->expense_type_fk])
+                ->with('success','Data sudah diubah');
+        
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     /**
@@ -150,6 +167,6 @@ class ExpenseController extends Controller
     {
         $expense->delete();
         return redirect()->route('section.expenses', ['type_id' => 1])
-            ->with('success','article deleted successfully');
+            ->with('success','Data berhasil dihapus');
     }
 }
