@@ -36,9 +36,8 @@ class DashboardController extends Controller
 
     public function indexArticle() # SHOW
     {
-        $articles = Articles::paginate(5);
-        return view('dashboard', ['articles' => $articles, 'section' => 'article'])
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        $articles = Articles::all();
+        return view('dashboard', ['articles' => $articles, 'section' => 'article_admin', 'i' => 0]);
     }
 
     public function indexProduction() {

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ExpenseTypeSeeder::class);
         $this->call(ExpenseSeeder::class);
         $this->call(ProductSeeder::class);
+        $this->call(ArticleSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

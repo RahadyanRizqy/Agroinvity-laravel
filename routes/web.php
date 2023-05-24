@@ -51,6 +51,7 @@ Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->nam
 Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
 Route::get('dashboard/products', [DashboardController::class, 'indexProduction'])->name('section.production');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
+Route::get('dashboard/account', [AccountController::class, 'index'])->name('section.account');
 // Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
 Route::get('dashboard/profile', [DashboardController::class, 'dashboardProfile'])->name('dashboard.profile');
@@ -76,7 +77,7 @@ Route::resource('dashboard/accounts', AccountController::class);
 
 // CRUD PEMASUKAN
 
-Route::resource('dashboard/articles', ArticleController::class);
+Route::resource('articles', ArticleController::class);
 
 // FORBIDDEN ACCESS
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Articles;
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ArticleController extends Controller
 {
@@ -36,21 +37,21 @@ class ArticleController extends Controller
         $request->validate([
             'title' => 'required',
             'text' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
   
         $input = $request->all();
   
-        if ($image = $request->file('image')) {
-            $destinationPath = 'image/';
-            $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-            $input['image'] = "$profileImage";
-        }
+        // if ($image = $request->file('image')) {
+        //     $destinationPath = 'image/';
+        //     $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
+        //     $image->move($destinationPath, $profileImage);
+        //     $input['image'] = "$profileImage";
+        // }
     
         Articles::create($input);
      
-        return redirect()->route('articles.index')
+        return redirect()->route('section.article')
             ->with('success','Articles posted successfully.');
     }
 
@@ -84,28 +85,46 @@ class ArticleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Articles $articles) # UPDATING PROCESS
+    public function update(Request $request, Articles $article) # UPDATING PROCESS
     {
-        $request->validate([
-            'title' => 'required',
-            'text' => 'required'
-        ]);
+        // $input = $request->validate([
+        //     'title' => 'required',
+        //     'text' => 'required'
+        // ]);
   
-        $input = $request->all();
+        // $input = $request->all();
   
-        if ($image = $request->file('image')) {
-            $destinationPath = 'image/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-            $input['image'] = "$profileImage";
-        }else{
-            unset($input['image']);
-        }
+        // // if ($image = $request->file('image')) {
+        // //     $destinationPath = 'image/';
+        // //     $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+        // //     $image->move($destinationPath, $profileImage);
+        // //     $input['image'] = "$profileImage";
+        // // }else{
+        // //     unset($input['image']);
+        // // }
           
-        $articles->update($input);
+        // $articles->update($input);
     
-        return redirect()->route('articles.index')
-            ->with('success','Articles updated successfully');
+        // return redirect()->route('section.article')
+        //     ->with('success','Articles updated successfully');
+
+        try {
+        
+            $input = $request->validate([
+                'title' => 'required',
+                'text' => 'required',
+            ]);
+            
+            $article->update($input);
+
+            return redirect()->route('section.article')
+                ->with('success','Data sudah diubah');
+        
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     /**
@@ -115,7 +134,7 @@ class ArticleController extends Controller
     {
         $article->delete();
      
-        return redirect()->route('articles.index')
-            ->with('success','article deleted successfully');
+        return redirect()->route('section.article')
+            ->with('success','Artikel berhasil dihapus');
     }
 }

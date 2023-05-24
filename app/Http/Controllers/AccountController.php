@@ -15,10 +15,19 @@ class AccountController extends Controller
      */
     public function index()
     {
-        return view('dashboard')
-            ->with('accounts', Accounts::where('account_type_fk', 2)->get())
-            ->with('i', 0)
-            ->with('section', 'account');
+        if (Auth::user()->account_type_fk == 1) {
+            return view('dashboard')
+                ->with('accounts', Accounts::where('account_type_fk', 2)->get())
+                ->with('i', 0)
+                ->with('section', 'account');
+        } else if (Auth::user()->account_type_fk == 2) {
+            return view('dashboard')
+                ->with('accounts', Accounts::where('account_type_fk', 3)
+                ->where('account_rel_fk', Auth::id())
+                ->get())
+                ->with('i', 0)
+                ->with('section', 'account');
+        }
     }
 
     /**
@@ -26,6 +35,7 @@ class AccountController extends Controller
      */
     public function create()
     {
+
         return view('forms.account');
     }
 
@@ -34,38 +44,61 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // $request->validate([
-            //     'name' => 'required',
-            //     'quantity' => 'required',
-            //     'price_per_qty' => 'required',
-            // ], [
-            //     'name.required' => 'Nama harus diisi', 
-            //     'quantity.required' => 'Jumlah harus diisi', 
-            //     'price_per_qty.required' => 'Harga harus diisi']);
-
-            $input = $request->validate([
-                'fullname' => 'required|max:255',
-                'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-                'phone_number' => 'required|numeric|digits_between:10,20',
-                'password' => 'required|min:2|max:255',
-            ]);
-    
-            $input['password'] = Hash::make($input['password']);
+        $input = $request->validate([
+            'fullname' => 'required|max:255',
+            'email' => 'required|email:dns|min:2|max:255|unique:accounts',
+            'phone_number' => 'required|numeric|digits_between:10,20',
+            'password' => 'required|min:2|max:255',
+        ]);
         
-            $accounts = Accounts::where('email', $input['email'])->exists();
-            if ($accounts) {
-                return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
-            }            
-            Accounts::create($input);
-            return redirect()->route('accounts.index')
-                ->with('success','Akun mitra berhasil dibuat');
-
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
+        if (Auth::user()->account_type_fk == 2) {
+            $input['account_type_fk'] = 3;
+            $input['account_rel_fk'] = Auth::id();
         }
+        $input['password'] = Hash::make($input['password']);
+    
+        $accounts = Accounts::where('email', $input['email'])->exists();
+        if ($accounts) {
+            return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
+        }            
+        Accounts::create($input);
+        return redirect()->route('accounts.index')
+            ->with('success','Akun mitra berhasil dibuat');
+        // try {
+        //     // $request->validate([
+        //     //     'name' => 'required',
+        //     //     'quantity' => 'required',
+        //     //     'price_per_qty' => 'required',
+        //     // ], [
+        //     //     'name.required' => 'Nama harus diisi', 
+        //     //     'quantity.required' => 'Jumlah harus diisi', 
+        //     //     'price_per_qty.required' => 'Harga harus diisi']);
+
+        //     $input = $request->validate([
+        //         'fullname' => 'required|max:255',
+        //         'email' => 'required|email:dns|min:2|max:255|unique:accounts',
+        //         'phone_number' => 'required|numeric|digits_between:10,20',
+        //         'password' => 'required|min:2|max:255',
+        //     ]);
+            
+        //     if (Auth::user()->account_type_fk == 2) {
+        //         $input['account_type_fk'] = 3;
+        //     }
+        //     $input['password'] = Hash::make($input['password']);
+        
+        //     $accounts = Accounts::where('email', $input['email'])->exists();
+        //     if ($accounts) {
+        //         return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
+        //     }            
+        //     Accounts::create($input);
+        //     return redirect()->route('accounts.index')
+        //         ->with('success','Akun mitra berhasil dibuat');
+
+        // } catch (\Exception $e) {
+        //     return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        // } catch (ValidationException $e) {
+        //     return redirect()->back()->withErrors($e->errors())->withInput();
+        // }
     }
 
     /**
@@ -79,9 +112,9 @@ class AccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Accounts $accounts)
+    public function edit(Accounts $account)
     {
-        //
+        return view('forms.accounts.edit', ['account' => $account]);
     }
 
     /**
@@ -104,7 +137,7 @@ class AccountController extends Controller
               
             $account->update($input);
     
-            return redirect()->route('section.main')
+            return redirect()->route('section.account')
                 ->with('success','Akun sudah diubah');
         
         } catch (\Exception $e) {
@@ -117,8 +150,10 @@ class AccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Accounts $accounts)
+    public function destroy(Accounts $account)
     {
-        //
+        $account->delete();
+        return redirect()->route('section.account')
+            ->with('success','Data berhasil dihapus');
     }
 }

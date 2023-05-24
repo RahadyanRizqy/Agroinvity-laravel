@@ -1,6 +1,10 @@
 @extends('master')
 
-@section('title', 'Profil Akun')
+@if($account->account_type_fk == 3)
+    @section('title', 'Ubah Akun Pegawai')
+@else
+    @section('title', 'Profil Akun')
+@endif
 
 @push('style')
 <style>

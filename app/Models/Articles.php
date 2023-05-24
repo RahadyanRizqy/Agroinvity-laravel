@@ -9,7 +9,9 @@ class Articles extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title', 'text', 'image'
+    public $timestamps = false;
+
+    protected $guarded = [
+        'id'
     ];
 }
