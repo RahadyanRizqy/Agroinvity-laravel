@@ -1,10 +1,24 @@
 <main>
-    @if ($expenses->first()->expense_type_fk == 1)
-        <h1 class="title">Bahan Baku</h1>
-    @elseif ($expenses->first()->expense_type_fk == 2)
-        <h1 class="title">Operasional</h1>
+    @if ($message = Session::get('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire(
+            'Berhasil',
+            '{{ $message }}',
+            'success'
+        )
+    </script>
     @endif
-    <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $expenses->first()->expense_type_fk])}}">+ Tambah Bahan Baku</a>
+    @if ($type == 1)
+        <h1 class="title">Bahan Baku</h1>
+        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type])}}">+ Tambah Bahan Baku</a>
+    @elseif ($type == 2)
+        <h1 class="title">Operasional</h1>
+        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type])}}">+ Tambah Operasional</a>
+    @else
+        <h1 class="title">Belum Ada Data</h1>
+        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type])}}">+ Tambah Data</a>
+    @endif
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

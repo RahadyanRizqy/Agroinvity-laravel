@@ -26,10 +26,10 @@ class DashboardController extends Controller
             ->where('expenseType.id', $type_id);
 
         if ($type_id == 1) {
-            return view('dashboard', ['expenses' => $expenses, 'section' => 'expense'])
+            return view('dashboard', ['expenses' => $expenses, 'section' => 'expense', 'type' => $type_id])
                 ->with('i', (request()->input('page', 1) - 1) * 10);
         } else if ($type_id == 2) {
-            return view('dashboard', ['expenses' => $expenses, 'section' => 'expense'])
+            return view('dashboard', ['expenses' => $expenses, 'section' => 'expense', 'type' => $type_id])
                 ->with('i', (request()->input('page', 1) - 1) * 10);
         }
     }
@@ -43,7 +43,7 @@ class DashboardController extends Controller
 
     public function indexProduction() {
         $products = Accounts::with('ownProduct')->find(Auth::id())->ownProduct;
-        return view('dashboard', ['productions' => $products, 'section' => 'production'])
+        return view('dashboard', ['productions' => $products, 'section' => 'product'])
             ->with('i', (request()->input('page', 1) - 1) * 15);
 
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Contracts\Session\Session;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -47,17 +48,29 @@ Route::get('dashboard', [DashboardController::class, 'showDashboard'])->name('se
 Route::get('dashboard/article', [DashboardController::class, 'indexArticle'])->name('section.article');
 Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->name('section.report');
 Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
-Route::get('dashboard/production', [DashboardController::class, 'indexProduction'])->name('section.production');
+Route::get('dashboard/products', [DashboardController::class, 'indexProduction'])->name('section.production');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 // Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
 Route::get('dashboard/profile', function() { return view('forms/account');})->name('dashboard.profile');
+
 // CRUD PENGELUARAN
 Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
 Route::post('expenses/{type_id}/store', [ExpenseController::class, 'store'])->name('expenses.store');
+
 Route::delete('expenses/{expense}/delete', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
 Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->name('expenses.update');
+
+// Route::get('product/create', [ProductController::class, 'create'])->name('product.create');
+// Route::post('product/store', [ProductController::class, 'store'])->name('product.store');
+
+// Route::delete('product/{product}/delete', [ProductController::class, 'delete'])->name('product.destroy');
+// Route::get('product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
+// Route::put('product/{product}/update', [ProductController::class, 'update'])->name('product.update');
+
+Route::resource('products', ProductController::class);
+
 
 // CRUD PEMASUKAN
 

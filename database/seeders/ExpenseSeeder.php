@@ -39,7 +39,7 @@ class ExpenseSeeder extends Seeder
             array('Minyak Goreng 1kg', 20, 34500, 3, 2),
             array('Minyak Ikan Dorang 1kg', 15, 34550, 2, 2),
             array('Minyak Kelapa 2kg', 16, 34500, 3, 2),
-            array('Minyak Curha 1kg', 7, 34500, 2, 2),
+            array('Minyak Curah 1kg', 7, 34500, 2, 2),
         );
 
         for ($i = 0; $i < count($expenseSeed); $i++) {

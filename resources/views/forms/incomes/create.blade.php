@@ -1,10 +1,6 @@
 @extends('master')
 
-@if ($type_id == 1)
-    @section('title', 'Menambah Data Bahan Baku')
-@elseif ($type_id == 2)
-    @section('title', 'Menambah Data Operasional')
-@endif
+@section('title', 'Menambah Data Bahan Baku')
 
 @push('style')
 <style>
@@ -50,7 +46,6 @@
 @endpush
 
 <div class="sweetalert">
-    {{ $message = ""}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if ($errors->any())
     <script>
@@ -79,28 +74,26 @@
 <div class="content">
     <div class="form-container">
         <div class="edit-form col-4">
-            <form id="registration-form" action="{{ route('expenses.store', ['type_id' => $type_id])}}" method="post">
+            <form action="{{ route('products.store')}}" method="post">
                 @csrf
                 <div class="form-group">
-                    @if($type_id == 1)
-                        <label for="name" class="form-label">Nama Bahan Baku</label>
-                    @elseif($type_id == 2)
-                        <label for="name" class="form-label">Nama Operasional</label>
-                    @else
-                        <label for="name" class="form-label">Ini Ngebug</label>
-                    @endif
-                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" value="{{ old('name') }}">
+                    <label for="name" class="form-label">Nama Produk: </label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Daun Teh 1kg" required>
                 </div>
                 <div class="form-group">
-                    <label for="quantity" class="form-label">Jumlah: </label>
-                    <input type="number" class="form-control" name="quantity" placeholder="cth: 2" value="{{ old('quantity') }}">
+                    <label for="total_qty" class="form-label">Jumlah: </label>
+                    <input type="number" class="form-control" name="total_qty" placeholder="cth: 2" required>
+                </div>
+                <div class="form-group">
+                    <label for="sold_products" class="form-label">Produk Terjual: </label>
+                    <input type="number" class="form-control" name="sold_products" placeholder="cth: 20" required>
                 </div>
                 <div class="form-group">
                     <label for="price_per_qty" class="form-label">Harga: </label>
-                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" value="{{ old('price_per_qty') }}">
+                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 50000" required>
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
-                <a class="btn btn-danger" href="{{ route('section.expenses', $type_id) }}">Batal</a>
+                <a class="btn btn-danger" href="{{ route('section.production') }}">Batal</a>
             </form>
         </div>
     </div>

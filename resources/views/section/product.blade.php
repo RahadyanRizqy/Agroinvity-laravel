@@ -1,6 +1,16 @@
 <main>
-    <h1 class="title">Produksi</h1>
-    <button class="btn btn-primary mb-3" onClick="inputForm(3)">+ Tambah Product</button>
+    @if ($message = Session::get('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire(
+            'Berhasil',
+            '{{ $message }}',
+            'success'
+        )
+    </script>
+    @endif
+    <h1 class="title">Produk</h1>
+    <a class="btn btn-primary mb-3" href="{{ route('products.create')}}">+ Tambah Produk</a>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Validation\ValidationException;
 use App\Models\Expenses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
@@ -66,7 +67,7 @@ class ExpenseController extends Controller
             
             $input = $request->all();
     
-            $input['account_fk'] = 2;
+            $input['account_fk'] = Auth::id();
             $input['expense_type_fk'] = $type_id;
             
             $expenses = Expenses::where('name', $input['name'])->exists();
@@ -75,9 +76,15 @@ class ExpenseController extends Controller
             }
             
             Expenses::create($input);
-            return redirect()->route('section.expenses', ['type_id' => $type_id]);
+            if ($type_id == 1) {
+                return redirect()->route('section.expenses', ['type_id' => $type_id])->with('success','Bahan baku berhasil diinput');
+            } else if ($type_id == 2) {
+                return redirect()->route('section.expenses', ['type_id' => $type_id])->with('success','Operasional berhasil diinput');
+            }
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
         }
 
         // OLD

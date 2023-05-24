@@ -13,6 +13,9 @@ class Products extends Model
     //     'name', 'price_per_qty', 'total_qty', 'created_at', 'update_at', 'total_qty', 'sold_products', 'stock_products', 'account_fk'
     // ];
 
+
+    public $timestamps = false;
+
     protected $guarded = [
         'id'
     ];

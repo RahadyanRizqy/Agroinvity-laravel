@@ -44,7 +44,7 @@ class ProductSeeder extends Seeder
                 'price_per_qty' => $productSeed[$i][2],
                 'sold_products' => $productSeed[$i][3],
                 'account_fk' => $productSeed[$i][4],
-                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'stored_at' => Carbon::now()->format('Y-m-d H:i:s'),
             ]
         );
     }   
