@@ -15,6 +15,12 @@
   <link rel="stylesheet" href="{{ asset('fontawesome6/css/fontawesome.css') }}">
   <link rel="stylesheet" href="{{ asset('fontawesome6/css/brand.css') }}">
   <link rel="stylesheet" href="{{ asset('fontawesome6/css/solid.css') }}">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.1/i18n/jquery-ui-i18n.min.js"></script>
 @endpush
 
 @section('content')
@@ -55,11 +61,11 @@
         <li><a href="{{ route('section.production') }}"><i class="fa-solid fa-truck-ramp-box icon"></i>Produksi</a></li>
       </ul>
     </li>
-    <li><a href="{{ route('articles.index') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>
+    <li><a href="{{ route('section.article') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>
     <li><a href="{{ route('section.calculator') }}"><i class='bx bxs-calculator icon'></i> Kalkulator</a></li>
     @else
     <li><a href="{{ route('accounts.index') }}"><i class='bx bxs-user-account icon'></i>Data Akun Mitra</a></li>
-    <li><a href="{{ route('section.article') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>
+    <li><a href="{{ route('articles.index') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>
     @endif
 
   </ul>
@@ -172,6 +178,5 @@ foreach ($dates as $date) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
 </script>
-<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 @endsection
 {{-- Digunakan untuk Expenses --}}

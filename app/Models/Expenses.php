@@ -16,6 +16,8 @@ class Expenses extends Model
         'id'
     ];
 
+    public $timestamps = false;
+
     public function expenseType() {
         return $this->belongsTo(ExpenseTypes::class, 'expense_type_fk');
     }

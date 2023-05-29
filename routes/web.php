@@ -39,6 +39,10 @@ Route::get('/super', function() {
     return view('super');
 });
 
+Route::get('/report_print', function() {
+    return view('section.report_print');
+});
+
 // SESI
 Route::resource('login', LoginController::class);
 Route::resource('register', RegisterController::class);
@@ -52,6 +56,7 @@ Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator
 Route::get('dashboard/products', [DashboardController::class, 'indexProduction'])->name('section.production');
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/account', [AccountController::class, 'index'])->name('section.account');
+Route::post('dashboard/report/result', [DashboardController::class, 'showReportResults'])->name('section.reportresults');
 // Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
 Route::get('dashboard/profile', [DashboardController::class, 'dashboardProfile'])->name('dashboard.profile');
@@ -82,6 +87,8 @@ Route::resource('articles', ArticleController::class);
 // FORBIDDEN ACCESS
 
 Route::get('forbidden', function() { return view('forbidden'); });
+
+Route::get('/test', function() { return view('test'); });
 // Route::resource('expenses',ExpenseControl;ler::class);
 // Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');
 

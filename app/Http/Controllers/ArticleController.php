@@ -14,10 +14,8 @@ class ArticleController extends Controller
      */
     public function index() # SHOW
     {
-        $articles = Articles::paginate(5);
-    
-        return view('articles.index',compact('articles'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        $articles = Articles::all();
+        return view('dashboard', ['articles' => $articles, 'section' => 'article_admin', 'i' => 0]);
             // ->with('i', 1);
     }
 

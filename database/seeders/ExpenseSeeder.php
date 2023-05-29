@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class ExpenseSeeder extends Seeder
 {
@@ -15,6 +16,10 @@ class ExpenseSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
+
+        $startDate = '2023-04-25 00:00:00';
+        $endDate = '2023-05-31 00:00:00';
         $expenseSeed = array(
                 // nama, qty, harga, user, tipe
 
@@ -50,7 +55,7 @@ class ExpenseSeeder extends Seeder
                     'price_per_qty' => $expenseSeed[$i][2],
                     'account_fk' => $expenseSeed[$i][3],
                     'expense_type_fk' => $expenseSeed[$i][4],
-                    'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'stored_at' => $faker->dateTimeBetween($startDate, $endDate)->format('Y-m-d H:i:s'),
                 ]
             );
         }

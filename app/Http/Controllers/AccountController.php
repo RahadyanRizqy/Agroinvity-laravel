@@ -136,8 +136,12 @@ class AccountController extends Controller
             $input['password'] = Hash::make($input['password']);
               
             $account->update($input);
-    
-            return redirect()->route('section.account')
+            
+            if ($account->account_type_fk == 3) {
+                return redirect()->route('section.account')
+                    ->with('success','Akun sudah diubah');
+            }
+            return redirect()->route('section.main')
                 ->with('success','Akun sudah diubah');
         
         } catch (\Exception $e) {

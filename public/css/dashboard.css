@@ -428,6 +428,10 @@ main .content-data .chart {
 main .content-data .chart::-webkit-scrollbar {
 	display: none;
 }
+
+.main-report {
+	padding: 0;
+}
 /* MAIN */
 /* CONTENT */
 

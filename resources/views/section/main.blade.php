@@ -1,4 +1,14 @@
 <main>
+  @if ($message = Session::get('success'))
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+      Swal.fire(
+          'Berhasil',
+          '{{ $message }}',
+          'success'
+      )
+  </script>
+  @endif
   <h1 class="title">Dashboard</h1>
   <h5 class="greet">Selamat datang {{ Auth::user()->fullname }}!</h5>
   {{-- <ul class="breadcrumbs">
@@ -68,7 +78,6 @@
     <div class="content-data">
       <div class="head">
         <h3>Activities</h3>
-
         <div class="menu">
           <i class='bx bx-dots-horizontal-rounded icon'></i>
           <ul class="menu-link">

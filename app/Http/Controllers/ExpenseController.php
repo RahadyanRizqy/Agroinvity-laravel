@@ -70,7 +70,9 @@ class ExpenseController extends Controller
             $input['account_fk'] = Auth::id();
             $input['expense_type_fk'] = $type_id;
             
-            $expenses = Expenses::where('name', $input['name'])->exists();
+            $expenses = Expenses::where('name', $input['name'])
+                                ->where('account_fk', Auth::id())
+                                ->exists();
             if ($expenses) {
                 return redirect()->back()->withErrors(['message' => 'Data sudah ada!']);
             }
@@ -166,7 +168,7 @@ class ExpenseController extends Controller
     public function destroy(Expenses $expense)
     {
         $expense->delete();
-        return redirect()->route('section.expenses', ['type_id' => 1])
+        return redirect()->route('section.expenses', ['type_id' => $expense->expense_type_fk])
             ->with('success','Data berhasil dihapus');
     }
 }

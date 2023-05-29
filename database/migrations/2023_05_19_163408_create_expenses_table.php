@@ -14,11 +14,12 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->string("name", 255)->unique();
+            $table->string("name", 255);
             $table->integer("quantity");
             $table->integer("price_per_qty");
-            $table->timestamp("created_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
-            $table->timestamp("updated_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            // $table->timestamp("created_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            // $table->timestamp("updated_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            $table->timestamp("stored_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
             $table->unsignedBigInteger("account_fk");
             $table->unsignedBigInteger("expense_type_fk");
 

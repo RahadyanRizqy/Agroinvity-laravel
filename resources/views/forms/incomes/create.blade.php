@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'Menambah Data Bahan Baku')
+@section('title', 'Menambah Data Produk')
 
 @push('style')
 <style>

@@ -1,4 +1,5 @@
 <main>
+    <h1>Daftar Artikel</h1>
     <h1 class="title">Article</h1>
     <a class="btn btn-primary mb-3" href="{{ route('articles.create')}}">+ Tambah Artikel</a>
     <table class="table table-bordered">

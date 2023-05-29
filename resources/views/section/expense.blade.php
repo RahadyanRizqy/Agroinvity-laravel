@@ -9,15 +9,15 @@
         )
     </script>
     @endif
-    @if ($type == 1)
+    @if ($type_id == 1)
         <h1 class="title">Bahan Baku</h1>
-        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type])}}">+ Tambah Bahan Baku</a>
-    @elseif ($type == 2)
+        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => 1])}}">+ Tambah Bahan Baku</a>
+    @elseif ($type_id == 2)
         <h1 class="title">Operasional</h1>
-        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type])}}">+ Tambah Operasional</a>
+        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => 2])}}">+ Tambah Operasional</a>
     @else
         <h1 class="title">Belum Ada Data</h1>
-        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type])}}">+ Tambah Data</a>
+        <a class="btn btn-primary mb-3" href="{{ route('expenses.create', ['type_id' => $type_id])}}">+ Tambah Data</a>
     @endif
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
