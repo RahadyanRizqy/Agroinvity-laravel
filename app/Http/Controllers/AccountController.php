@@ -44,61 +44,38 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->validate([
-            'fullname' => 'required|max:255',
-            'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-            'phone_number' => 'required|numeric|digits_between:10,20',
-            'password' => 'required|min:2|max:255',
-        ]);
-        
-        if (Auth::user()->account_type_fk == 2) {
-            $input['account_type_fk'] = 3;
-            $input['account_rel_fk'] = Auth::id();
-        }
-        $input['password'] = Hash::make($input['password']);
-    
-        $accounts = Accounts::where('email', $input['email'])->exists();
-        if ($accounts) {
-            return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
-        }            
-        Accounts::create($input);
-        return redirect()->route('accounts.index')
-            ->with('success','Akun mitra berhasil dibuat');
-        // try {
-        //     // $request->validate([
-        //     //     'name' => 'required',
-        //     //     'quantity' => 'required',
-        //     //     'price_per_qty' => 'required',
-        //     // ], [
-        //     //     'name.required' => 'Nama harus diisi', 
-        //     //     'quantity.required' => 'Jumlah harus diisi', 
-        //     //     'price_per_qty.required' => 'Harga harus diisi']);
-
-        //     $input = $request->validate([
-        //         'fullname' => 'required|max:255',
-        //         'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-        //         'phone_number' => 'required|numeric|digits_between:10,20',
-        //         'password' => 'required|min:2|max:255',
-        //     ]);
+        try {
+            $input = $request->validate([
+                'fullname' => 'required|max:255',
+                'email' => 'required|email:dns|min:2|max:255|unique:accounts',
+                'phone_number' => 'required|numeric|digits_between:10,20',
+                'password' => 'required|min:2|max:255',
+            ]);
             
-        //     if (Auth::user()->account_type_fk == 2) {
-        //         $input['account_type_fk'] = 3;
-        //     }
-        //     $input['password'] = Hash::make($input['password']);
+            if (Auth::user()->account_type_fk == 2) {
+                $input['account_type_fk'] = 3;
+                $input['account_rel_fk'] = Auth::id();
+            }
+            $input['password'] = Hash::make($input['password']);
         
-        //     $accounts = Accounts::where('email', $input['email'])->exists();
-        //     if ($accounts) {
-        //         return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
-        //     }            
-        //     Accounts::create($input);
-        //     return redirect()->route('accounts.index')
-        //         ->with('success','Akun mitra berhasil dibuat');
+            $accounts = Accounts::where('email', $input['email'])->exists();
+            if ($accounts) {
+                return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
+            }            
+            Accounts::create($input);
 
-        // } catch (\Exception $e) {
-        //     return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
-        // } catch (ValidationException $e) {
-        //     return redirect()->back()->withErrors($e->errors())->withInput();
-        // }
+            if (Auth::user()->account_type_fk == 1) {
+                return redirect()->route('accounts.index')
+                    ->with('success','Akun mitra berhasil dibuat');
+            }
+            return redirect()->route('accounts.index')
+                ->with('success','Akun pegawai berhasil dibuat');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 
     /**

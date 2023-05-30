@@ -57,6 +57,7 @@ Route::get('dashboard/products', [DashboardController::class, 'indexProduction']
 Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/account', [AccountController::class, 'index'])->name('section.account');
 Route::post('dashboard/report/result', [DashboardController::class, 'showReportResults'])->name('section.reportresults');
+Route::post('dashboard/calculator/result', [DashboardController::class, 'showCalcResult'])->name('section.calcresult');
 // Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
 Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
 Route::get('dashboard/profile', [DashboardController::class, 'dashboardProfile'])->name('dashboard.profile');

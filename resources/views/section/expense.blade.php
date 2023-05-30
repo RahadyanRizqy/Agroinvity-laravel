@@ -47,7 +47,7 @@
           <td>{{ $expense->name }}</td>
           <td>{{ $expense->quantity }}</td>
           <td>{{ $expense->price_per_qty }}</td>
-          <td>{{ $expense->created_at }}</td>
+          <td>{{ $expense->stored_at }}</td>
           <td>
               <form action="{{ route('expenses.destroy',$expense->id) }}" method="POST">
                   

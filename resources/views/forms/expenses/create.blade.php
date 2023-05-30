@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('master')
 
 @if ($type_id == 1)
     @section('title', 'Menambah Data Bahan Baku')

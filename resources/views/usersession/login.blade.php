@@ -41,7 +41,7 @@
                         <span class="warning" style="color: white;">{{session('loginError')}}</span>
                     </div>
                     <div class="mt-1 col-md-12">
-                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="wa.me/6288804897436">kontak admin</a></span>
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="https://wa.me/6288804897436">kontak admin</a></span>
                     </div>
                     @endif
                 </form>

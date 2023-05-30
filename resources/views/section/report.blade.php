@@ -1,9 +1,17 @@
 @php
 // $expenses = [];
 // $incomes = [];
-$lineChart = [];
-$percentage = [50,25,25];
-$dates = [];
+if (count($lineChart) == 1) {
+    array_unshift($lineChart, 0);
+}
+
+if (count($dates) == 1) {
+    $date = date_create($dates[0]);
+    date_sub($date,date_interval_create_from_date_string("1 days"));
+    $date = date_format($date,"Y-m-d H:i:s");
+    array_unshift($dates, $date);
+}
+// $percentageChart = [5/10,4/10,1/10];
 @endphp
 <main>
     <section class="report">
@@ -79,7 +87,7 @@ $dates = [];
 
             </div>
             <div class="col-md-8 g-0">
-                <div class="mt-3 d-flex justify-content-center align-items-center">
+                <div class="mt-3git d-flex justify-content-center align-items-center">
                     <table class="table table-bordered">
                         <tr>
                             @if(isset($dateto) && isset($datefrom))
@@ -89,12 +97,12 @@ $dates = [];
                             @endif
                         </tr>
                         <tr>
-                            <td>Total Jumlah Pengeluaran: </td>
+                            <td>Total Jumlah Pengeluaran: {{$percentageArr[0]+$percentageArr[1]}}</td>
                             <td>Omzet: Rp{{ $expenses ?? 0 }}</td>
                         </tr>
                         <tr>
-                            <td>Total Jumlah Produk: </td>
-                            <td>Pemasukan: Rp{{ $incomes ?? 0}}</td>
+                            <td>Total Jumlah Produk: {{$percentageArr[2]}}</td>
+                            <td>Pemasukan: Rp{{ array_sum($lineChart) ?? 0}}</td>
                         </tr>
                     </table>
                 </div>
@@ -175,14 +183,21 @@ foreach ($dates as $date) {
     var chart = new ApexCharts(document.querySelector("#report"), options);
     chart.render();
     </script>
+    @php
+    $var = ["Bahan Baku", 'Operasional', 'Produksi'];
+
+    $percentageLabel = array_map(function($v1, $v2) {
+        return $v1 . ": " . $v2;
+    }, $var, $percentageArr);
+    @endphp
     <script>
     var options = {
-            series: <?php echo json_encode($percentage, JSON_HEX_TAG); ?>,
+            series: <?php echo json_encode($percentageChart, JSON_HEX_TAG); ?>,
             chart: {
             width: 375,
             type: 'pie',
         },
-        labels: ['Bahan Baku', 'Operasional', 'Produksi'],
+        labels: <?php echo json_encode($percentageLabel, JSON_HEX_TAG);?>,
         responsive: [{
             breakpoint: 480,
             options: {
