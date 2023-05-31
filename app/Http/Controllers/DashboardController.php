@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Articles;
 use App\Models\Expenses;
 use Illuminate\Http\Request;
+use Dompdf\Dompdf;
 use App\Http\Controllers\ArticleController;
 use App\Models\Accounts;
+use App\Models\Calculator;
 use App\Models\ProductHistories;
 use App\Models\Products;
 use Carbon\Carbon;
@@ -148,7 +150,7 @@ class DashboardController extends Controller
                 
             ]);
         } else if ($action === 'print') {
-            
+
             if ($request->filled('from') && $request->filled('to')) {
                 $input = $request->validate([
                     'from' => 'required',
@@ -219,6 +221,20 @@ class DashboardController extends Controller
                     'lineChart' => $lineValues,
                     
                 ]);
+                // $pdf = app('dompdf.wrapper');
+                // $pdf->loadView('section/report_print', 
+                // [
+                //     'incomes' => $products, 
+                //     'expenses' => $expenses, 
+                //     'datefrom' => $dateFrom, 
+                //     'dateto' => $dateTo, 
+                //     'percentageChart' => $percentageChart, 
+                //     'percentageArr' => $percentageArr,
+                //     'dates' => $lineDates, 
+                //     'lineChart' => $lineValues,
+                    
+                // ]);
+                // return $pdf->download('laporan-1.pdf');
             }
             else {
 
@@ -277,6 +293,18 @@ class DashboardController extends Controller
                     'dates' => $lineDates, 
                     'lineChart' => $lineValues
                 ]);
+
+                // $pdf = app('dompdf.wrapper');
+                // $pdf->loadView('section/report_print', 
+                // [
+                //     'incomes' => $products, 
+                //     'expenses' => $expenses, 
+                //     'percentageChart' => $percentageChart, 
+                //     'percentageArr' => $percentageArr, 
+                //     'dates' => $lineDates, 
+                //     'lineChart' => $lineValues
+                // ]);
+                // return $pdf->download('laporan-1.pdf');
             }
         }
 
@@ -368,27 +396,8 @@ class DashboardController extends Controller
             'dates' => $lineDates, 
             'lineChart' => $lineValues
         ]);
-    }
-    
-
-    public function showCalcResult(Request $request) {
-        $action = $request->input('action');
         
-        if ($action === 'omzet') {
-            return view('dashboard', ['section' => 'calculator'])->with('var', $action);
-        } elseif ($action === 'profit') {
-            return view('dashboard', ['section' => 'calculator'])->with('var', $action);
-        } elseif ($action === 'loss') {
-            return view('dashboard', ['section' => 'calculator'])->with('var', $action);
-        } elseif ($action === 'product') {
-            return view('dashboard', ['section' => 'calculator'])->with('var', $action);
-        } else {
-            return view('dashboard', ['section' => 'calculator'])->with('var', 'None');
-            
-        }
     }
-
-    
     
     public function printReport(Request $request) {
         if (!isset($request)) {
@@ -438,7 +447,9 @@ class DashboardController extends Controller
             }
             
 
-            return view('section/report_print', 
+            
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('section/report_print', 
             [
                 'incomes' => $products, 
                 'expenses' => $expenses, 
@@ -447,6 +458,8 @@ class DashboardController extends Controller
                 'dates' => $lineDates, 
                 'lineChart' => $lineValues
             ]);
+            return $pdf->download('laporan-1.pdf');
+            
         }
         $input = $request->validate([
             'from' => 'required',
@@ -505,7 +518,8 @@ class DashboardController extends Controller
             $percentageChart[] = $percentage;
         }
 
-        return view('section/report_print', 
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('section/report_print', 
         [
             'incomes' => $products, 
             'expenses' => $expenses, 
@@ -517,11 +531,163 @@ class DashboardController extends Controller
             'lineChart' => $lineValues,
             
         ]);
+        return $pdf->download('laporan-1.pdf');
     }
 
+
+    // CALCULATORS
     public function indexCalculator()
     {
-        return view('dashboard', ['section' => 'calculator']);
+        $currentMonth = Carbon::now()->format('Y-m');
+        $calc = Calculator::where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get();
+        return view('dashboard', ['section' => 'calculator', 'calc' => $calc]);
+    }
+
+    public function showCalcResult(Request $request) {
+        $action = $request->input('action');
+        
+        if ($request->filled('from') && $request->filled('to')) {
+            $input = $request->validate([
+                'from' => 'required',
+                'to' => 'required',
+            ]);
+
+            $calc = Calculator::where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get();
+            if ($action === 'material') {
+                // INSERT!
+                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 1)->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+
+                DB::table('calculators')->insert([
+                    'histories' => "[Bahan Baku: $exp1]" . "({$input['from']} - {$input['to']})",
+                    'account_fk' => Auth::id(),
+                    // 'values' => "[Operasional: $calc]"
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'operational') {
+                // INSERT!
+                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 2)->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                
+                DB::table('calculators')->insert([
+                    'histories' => "[Operasional: $exp2]" . "({$input['from']} - {$input['to']})",
+                    'account_fk' => Auth::id(),
+                    // 'values' => "[Operasional: $calc]"
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'product') {
+                // INSERT!
+
+                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+
+                DB::table('calculators')->insert([
+                    'histories' => "[Produk: $pro]" . "({$input['from']} - {$input['to']})",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'omzet') {
+                // INSERT!
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Omzet: $omzet]" . "({$input['from']} - {$input['to']})",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'loss') {
+                // INSERT!
+
+                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Kerugian: $loss]" . "({$input['from']} - {$input['to']})",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'profit') {
+                // INSERT!
+                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Keuntungan: $pros]" . "({$input['from']} - {$input['to']})",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'delete') {
+
+                Calculator::where('account_fk', Auth::id())->delete();
+                return redirect()->route('section.calculator');
+            }
+
+        } else {
+            $currentMonth = Carbon::now()->format('Y-m');
+            $calc = Calculator::where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get();
+            
+            if ($action === 'material') {
+                // INSERT!
+
+                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', 2)->where('expense_type_fk', 1)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Bahan Baku: $exp1] Bulan ini",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'operational') {
+                // INSERT!
+                
+                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', 2)->where('expense_type_fk', 2)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Operasional: $exp2] Bulan ini",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+
+            } else if ($action === 'product') {
+                // INSERT!
+                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Produk: $pro] Bulan ini",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'omzet') {
+                // INSERT!
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Omzet: $omzet] Bulan ini",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'loss') {
+                // INSERT!
+                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Kerugian: $loss] Bulan ini",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'profit') {
+                // INSERT!
+                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                DB::table('calculators')->insert([
+                    'histories' => "[Keuntungan: $pros] Bulan ini",
+                    'account_fk' => Auth::id(),
+                ]);
+                return redirect()->route('section.calculator');
+
+            } else if ($action === 'delete') {
+                // DELETE!
+
+                Calculator::where('account_fk', Auth::id())->delete();
+                return redirect()->route('section.calculator');
+            }
+        }
     }
 }
 

@@ -49,7 +49,7 @@ if (count($dates) == 1) {
                         </tr>
                     </table>
                 </div>
-                <div class="content-data d-flex vh-100">
+                <div class="content-data d-flex">
                     
                     <div class="container mt-5">
                         <div class="head d-flex justify-content-center">
@@ -86,7 +86,7 @@ if (count($dates) == 1) {
                 </div>
             </div>
             <div class="col-md-2">
-                
+
             </div>
         </div>
     </section>
@@ -105,7 +105,7 @@ foreach ($dates as $date) {
         name: 'keuntungan',
         data: <?php echo json_encode($lineChart, JSON_HEX_TAG); ?>,
         }],
-            chart: {
+            chart: { animations: { enabled: false },
             height: 300,
             type: 'area'
         },
@@ -124,6 +124,9 @@ foreach ($dates as $date) {
             format: 'dd/MM/yy HH:mm'
             },
         },
+        animations: {
+            enabled: false
+        }   
     };
     
     var chart = new ApexCharts(document.querySelector("#report"), options);
@@ -139,7 +142,7 @@ foreach ($dates as $date) {
     <script>
     var options = {
             series: <?php echo json_encode($percentageChart, JSON_HEX_TAG); ?>,
-            chart: {
+            chart: { animations: { enabled: false },
             width: 375,
             type: 'pie',
         },
@@ -175,6 +178,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+</script>
+<script>
+        window.onload = function() {
+            window.print();
+        };
 </script>
 </main>
 @endsection

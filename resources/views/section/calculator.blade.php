@@ -2,7 +2,7 @@
     <section class="report">
         <div class="row g-0">
             <div class="col-md-6 g-0">
-                <h1 class="title mb-5">Kalkulator</h1>
+                <h1 class="title mb-2">Kalkulator</h1>
                 <form action="{{ route('section.calcresult')}}" method="POST">
                     @csrf
                     <div class="date-group mb-3">
@@ -41,16 +41,22 @@
                     </div>
                     <div class="btn-group d-flex col-md-3 flex-column">
                         <div class="buttons">
-                            <button class="btn btn-primary mb-3" type="submit" name="action" value="omzet">Hitung Biaya Operasional</button>
+                            <button class="btn btn-primary mb-3" type="submit" name="action" value="operational">Hitung Biaya Operasional</button>
                         </div>
                         <div class="buttons">
-                            <button class="btn btn-primary mb-3" type="submit" name="action" value="profit">Hitung Biaya Bahan Baku</button>
+                            <button class="btn btn-primary mb-3" type="submit" name="action" value="material">Hitung Biaya Bahan Baku</button>
                         </div>
                         <div class="buttons">
                             <button class="btn btn-primary mb-3" type="submit" name="action" value="product">Hitung Pemasukan Produk</button>
                         </div>
                         <div class="buttons">
-                            <button class="btn btn-primary mb-3" type="submit" name="action" value="loss">Omzet</button>
+                            <button class="btn btn-primary mb-3" type="submit" name="action" value="omzet">Hitung Omzet</button>
+                        </div>
+                        <div class="buttons">
+                            <button class="btn btn-primary mb-3" type="submit" name="action" value="loss">Hitung Kerugian</button>
+                        </div>
+                        <div class="buttons">
+                            <button class="btn btn-primary mb-3" type="submit" name="action" value="profit">Hitung Keuntungan</button>
                         </div>
                         <div class="buttons">
                             <button class="btn btn-danger mb-3" type="submit" name="action" value="delete">Hapus History</button>
@@ -88,8 +94,9 @@
 
             </div>
             <div class="col-md-6 g-0">
-                <textarea name="" id="" cols="35" rows="12" style="font-size: 25pt; text-align: right;" readonly>Riwayat</textarea>
+                <textarea name="" id="" cols="60" rows="20" style="font-size: 15pt; text-align: left;" readonly>@foreach($calc as $c){{$c['histories'] . " [::] " . $c['stored_at']. "\n" }}@endforeach
+                </textarea>
             </div>
         </div>
     </section>
-</main>
+</main>`
