@@ -90,6 +90,10 @@ Route::resource('articles', ArticleController::class);
 Route::get('forbidden', function() { return view('forbidden'); });
 
 Route::get('/test', function() { return view('test'); });
+
+
+Route::post('/print', [DashboardController::class, 'printReport'])->name('getpdf');
+// Route::get('/report_print', function() { return view('section/report_print'); })->name('viewpdf');
 // Route::resource('expenses',ExpenseControl;ler::class);
 // Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');
 

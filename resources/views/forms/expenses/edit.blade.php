@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('master')
 
 @if ($expense->expense_type_fk == 1)
     @section('title', 'Mengubah Data Bahan Baku')

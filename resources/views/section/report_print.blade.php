@@ -7,90 +7,90 @@
 @endpush
 
 @php
-$expenses = [];
+// $expenses = [];
 // $incomes = [];
-$lineChart = [];
-$percentage = [];
-$dates = [];
+if (count($lineChart) == 1) {
+    array_unshift($lineChart, 0);
+}
+
+if (count($dates) == 1) {
+    $date = date_create($dates[0]);
+    date_sub($date,date_interval_create_from_date_string("1 days"));
+    $date = date_format($date,"Y-m-d H:i:s");
+    array_unshift($dates, $date);
+}
+// $percentageChart = [5/10,4/10,1/10];
 @endphp
 
 @section('content')
-<main class="main-report">
+<main>
     <section class="report">
-        <div class="row g-0 d-flex justify-content-center">
-            <div class="col-md-2 g-0">
+        <div class="row g-0">
+            <div class="col-md-2">
+
             </div>
             <div class="col-md-8 g-0">
-                <div class="d-flex pt-2 pb-2 justify-content-center align-items-center">
-                    <h3 class="text-center">Laporan PDF Tanggal 2023-05-27</h3>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
+                <div class="mt-3git d-flex justify-content-center align-items-center">
                     <table class="table table-bordered">
                         <tr>
-                            <th colspan="1">Data</th>
-                            <th colspan="6" class="text-center">Data Interval</th>
+                            @if(isset($dateto) && isset($datefrom))
+                                <th colspan="2" class="text-center">Data {{$datefrom}} Hingga {{$dateto}}</th>
+                            @else
+                                <th colspan="2" class="text-center">Data Bulan Ini</th>
+                            @endif
                         </tr>
                         <tr>
-                            <th>Mingguan</th>
-                            <td>Minggu ke-1</td>
-                            <td>Minggu ke-2</td>
-                            <td>Minggu ke-3</td>
-                            <td>Minggu ke-4</td>
-                            <td>Minggu ke-5</td>
-                            <th class="text-center">Total</th>
+                            <td>Total Jumlah Pengeluaran: {{$percentageArr[0]+$percentageArr[1]}}</td>
+                            <td>Omzet: Rp{{ $expenses ?? 0 }}</td>
                         </tr>
                         <tr>
-                            <th>Pengeluaran</th>
-                            @foreach ($expenses as $e)
-                                <td>{{ $e }}</td>
-                            @endforeach
-                            <td>Omzet: {{ array_sum($expenses)}}</td>
-                        </tr>
-                        <tr>
-                            <th>Pemasukan</th>
-                            @foreach ($incomes as $i)
-                                <td>{{ $i }}</td>
-                            @endforeach
-                            <td>Produksi: {{ array_sum($incomes)}}</td>
+                            <td>Total Jumlah Produk: {{$percentageArr[2]}}</td>
+                            <td>Pemasukan: Rp{{ array_sum($lineChart) ?? 0}}</td>
                         </tr>
                     </table>
                 </div>
-
-                <div class="content-data d-flex">
+                <div class="content-data d-flex vh-100">
                     
-                    <div class="container">
+                    <div class="container mt-5">
                         <div class="head d-flex justify-content-center">
                           <h3>Grafik Keuntungan</h3>
                         </div>
                         <div class="report">
                             <div id="report"></div>
                         </div>
-                        <div class="head d-flex justify-content-center">
+                        {{-- <div class="head d-flex justify-content-center">
                             <h3 class="ml-5 text-center">Profitabilitas dan Prediksi</h3>
                         </div>
-                        <p>Ini adalah prediksi sekitar 80%</p>
+                        <p>Ini adalah prediksi sekitar 80%</p> --}}
                     </div>
 
 
-                    <div class="container d-flex flex-column">
+                    <div class="container mt-5">
                         <div class="head d-flex justify-content-center">
                             <h3 class="text-center">Prosentase Pendataan</h3>
                         </div>
                         <div class="circle-chart d-flex justify-content-center align-items-center">
                             <div id="cirlce-chart"></div>
                         </div>
-                        <div class="head mt-5 d-flex justify-content-center">
+                        {{-- <div class="head mt-5 d-flex justify-content-center">
                             <h3 class="mt-5 text-center">Profitabilitas</h3>
                         </div>
-                        <p>Ini adalah prediksi sekitar 80%</p>
+                        <p>Ini adalah prediksi sekitar 80%</p> --}}
                     </div>
+
+                        {{-- <div class="head ml-5">
+                            <h3 class="ml-5 text-center">Profitabilitas dan Prediksi</h3>
+                        </div>
+                        <p>Ini adalah prediksi sekitar 80%</p> --}}
+
                 </div>
             </div>
-            <div class="col-md-2 g-0">
+            <div class="col-md-2">
+                
             </div>
         </div>
-    </section>  
-<?php  
+    </section>
+<?php
 $convertedDates = [];
 foreach ($dates as $date) {
     $dateTime = new DateTime($date);
@@ -100,67 +100,73 @@ foreach ($dates as $date) {
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="/js/dashboard.js"></script>
 <script>
-var options = {
-    series: [{
-    name: 'keuntungan',
-    data: <?php echo json_encode($lineChart, JSON_HEX_TAG); ?>
-    }],
-        chart: {
-        height: 300,
-        type: 'area'
-    },
-    dataLabels: {
-        enabled: false
-    },
-    stroke: {
-        curve: 'smooth'
-    },
-    xaxis: {
-        type: 'datetime',
-        // categories: ["2018-09-05T00:00:00.000Z", "2018-09-10T01:30:00.000Z", "2018-09-15T02:30:00.000Z", "2018-09-20T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-        categories: <?php echo json_encode($convertedDates, JSON_HEX_TAG); ?>,
-    },
-    tooltip: {
-        x: {
-        format: 'dd/MM/yy HH:mm'
+    var options = {
+        series: [{
+        name: 'keuntungan',
+        data: <?php echo json_encode($lineChart, JSON_HEX_TAG); ?>,
+        }],
+            chart: {
+            height: 300,
+            type: 'area'
         },
-    },
-};
-
-var chart = new ApexCharts(document.querySelector("#report"), options);
-chart.render();
-</script>
-<script>
-var options = {
-        series: <?php echo json_encode($convertedDates, JSON_HEX_TAG); ?>,
-        chart: {
-        width: 375,
-        type: 'pie',
-    },
-    labels: ['Bahan Baku', 'Operasional', 'Produksi'],
-    responsive: [{
-        breakpoint: 480,
-        options: {
-        chart: {
-            width: 200
+        dataLabels: {
+            enabled: false
         },
-        legend: {
-            position: 'bottom'
-        }
-        }
-    }]
-};
+        stroke: {
+            curve: 'smooth'
+        },
+        xaxis: {
+            type: 'datetime',
+            categories: <?php echo json_encode($convertedDates, JSON_HEX_TAG); ?>,
+        },
+        tooltip: {
+            x: {
+            format: 'dd/MM/yy HH:mm'
+            },
+        },
+    };
+    
+    var chart = new ApexCharts(document.querySelector("#report"), options);
+    chart.render();
+    </script>
+    @php
+    $var = ["Bahan Baku", 'Operasional', 'Produksi'];
 
-var chart = new ApexCharts(document.querySelector("#cirlce-chart"), options);
-chart.render();
+    $percentageLabel = array_map(function($v1, $v2) {
+        return $v1 . ": " . $v2;
+    }, $var, $percentageArr);
+    @endphp
+    <script>
+    var options = {
+            series: <?php echo json_encode($percentageChart, JSON_HEX_TAG); ?>,
+            chart: {
+            width: 375,
+            type: 'pie',
+        },
+        labels: <?php echo json_encode($percentageLabel, JSON_HEX_TAG);?>,
+        responsive: [{
+            breakpoint: 480,
+            options: {
+            chart: {
+                width: 200
+            },
+            legend: {
+                position: 'bottom'
+            }
+            }
+        }]
+    };
+    
+    var chart = new ApexCharts(document.querySelector("#cirlce-chart"), options);
+    chart.render();
 </script>
-<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var element = document.querySelector('.apexcharts-toolbar');
   element.style.display = 'none';
 });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>

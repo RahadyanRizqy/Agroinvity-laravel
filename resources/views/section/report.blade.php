@@ -54,10 +54,11 @@ if (count($dates) == 1) {
                             });
                         </script>
                     </div>
-                    <button class="btn btn-primary" type="submit">Tampilkan</button>
+                    <button class="btn btn-primary" type="submit" name="action" value="show">Tampilkan</button>
+                    <button class="btn btn-danger" type="submit" name="action" value="print">Cetak PDF</button>
                     {{-- <button id="showReportButton" class="btn btn-primary">Tampilkan</button> --}}
                 </form>
-                <a href="#" class="btn btn-danger mt-3">Cetak PDF <i class="fa fa-file-pdf-o"></i></a>
+                {{-- <a href="{{ route('getpdf') }}" class="btn btn-danger mt-3">Cetak PDF <i class="fa fa-file-pdf-o"></i></a> --}}
                 <script>
                     $(document).ready(function() {
                         $("#showReportButton").click(function() {
