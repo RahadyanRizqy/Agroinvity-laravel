@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string("name", 255)->unique();
             $table->integer("price_per_qty");
-            $table->timestamp("stored_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            $table->timestamp("stored_at");
             $table->integer("total_qty");
             $table->integer("sold_products");
             $table->integer("stock_products")->virtualAs("total_qty-sold_products");

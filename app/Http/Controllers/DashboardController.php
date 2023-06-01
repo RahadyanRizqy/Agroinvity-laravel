@@ -9,6 +9,7 @@ use Dompdf\Dompdf;
 use App\Http\Controllers\ArticleController;
 use App\Models\Accounts;
 use App\Models\Calculator;
+use App\Models\ExpenseHistories;
 use App\Models\ProductHistories;
 use App\Models\Products;
 use Carbon\Carbon;
@@ -554,7 +555,11 @@ class DashboardController extends Controller
     public function indexCalculator()
     {
         $currentMonth = Carbon::now()->format('Y-m');
-        $calc = Calculator::where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get();
+        $toId = Auth::user()->id;
+        if (Auth::user()->account_type_fk == 3) {
+            $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+        }
+        $calc = Calculator::where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get();
         return view('dashboard', ['section' => 'calculator', 'calc' => $calc]);
     }
 
@@ -567,26 +572,34 @@ class DashboardController extends Controller
                 'to' => 'required',
             ]);
 
+            $toId = Auth::user()->id;
+            if (Auth::user()->account_type_fk == 3) {
+                $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+            }
             $dateFrom = Carbon::createFromFormat('d M Y', $input['from'])->format('Y-m-d');
             $dateTo = Carbon::createFromFormat('d M Y', $input['to'])->format('Y-m-d');
             if ($action === 'material') {
                 // INSERT!
-                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 1)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
-
+                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->where('expense_type_fk', 1)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                if ($exp1 == 0 || $exp1 == null) {
+                    $exp1 = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Bahan Baku: $exp1]" . "({$input['from']} - {$input['to']})",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                     // 'values' => "[Operasional: $calc]"
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'operational') {
                 // INSERT!
-                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 2)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
-                
+                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->where('expense_type_fk', 2)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                if ($exp2 == 0 || $exp2 == null) {
+                    $exp2 = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Operasional: $exp2]" . "({$input['from']} - {$input['to']})",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                     // 'values' => "[Operasional: $calc]"
                 ]);
                 return redirect()->route('section.calculator');
@@ -594,59 +607,75 @@ class DashboardController extends Controller
             } else if ($action === 'product') {
                 // INSERT!
 
-                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
-
+                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                if ($pro == 0 || $pro == null) {
+                    $pro = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Produk: $pro]" . "({$input['from']} - {$input['to']})",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'omzet') {
                 // INSERT!
-                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                if ($omzet == 0 || $omzet == null) {
+                    $omzet = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Omzet: $omzet]" . "({$input['from']} - {$input['to']})",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'loss') {
                 // INSERT!
 
-                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                if ($loss == 0 || $loss == null) {
+                    $loss = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Kerugian: $loss]" . "({$input['from']} - {$input['to']})",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'profit') {
                 // INSERT!
-                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                if ($pros == 0 || $pros == null) {
+                    $pros = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Keuntungan: $pros]" . "({$input['from']} - {$input['to']})",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'delete') {
 
-                Calculator::where('account_fk', Auth::id())->delete();
+                Calculator::where('account_fk', $toId)->delete();
                 return redirect()->route('section.calculator');
             }
 
         } else {
             $currentMonth = Carbon::now()->format('Y-m');
-            $calc = Calculator::where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get();
-            
+            $toId = Auth::user()->id;
+            if (Auth::user()->account_type_fk == 3) {
+                $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+            }
             if ($action === 'material') {
                 // INSERT!
 
-                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', 2)->where('expense_type_fk', 1)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->where('expense_type_fk', 1)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                if ($exp1 == 0 || $exp1 == null) {
+                    $exp1 = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Bahan Baku: $exp1] Bulan ini",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
@@ -654,56 +683,81 @@ class DashboardController extends Controller
                 // INSERT!
                 
                 $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', 2)->where('expense_type_fk', 2)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                if ($exp2 == 0 || $exp2 == null) {
+                    $exp2 = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Operasional: $exp2] Bulan ini",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
 
             } else if ($action === 'product') {
                 // INSERT!
-                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                if ($pro == 0 || $pro == null) {
+                    $pro = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Produk: $pro] Bulan ini",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'omzet') {
                 // INSERT!
-                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                if ($omzet == 0 || $omzet == null) {
+                    $omzet = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Omzet: $omzet] Bulan ini",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'loss') {
                 // INSERT!
-                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                if ($loss == 0 || $loss == null) {
+                    $loss = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Kerugian: $loss] Bulan ini",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'profit') {
                 // INSERT!
-                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                if ($pros == 0 || $pros == null) {
+                    $pros = 0;
+                }
                 DB::table('calculators')->insert([
                     'histories' => "[Keuntungan: $pros] Bulan ini",
-                    'account_fk' => Auth::id(),
+                    'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
 
             } else if ($action === 'delete') {
                 // DELETE!
 
-                Calculator::where('account_fk', Auth::id())->delete();
+                Calculator::where('account_fk', $toId)->delete();
                 return redirect()->route('section.calculator');
             }
         }
+    }
+
+    public function indexExpenseHistory(Expenses $expense) {
+        $history = ExpenseHistories::where('expense_fk', $expense->id)->get();
+        return view('dashboard', ['section' => 'history', 'table_type' => 1, 'expense_histories' => $history, 'section_back' => $expense->expense_type_fk, 'i' => 0]);
+    }
+
+    public function indexProductHistory(Products $product) {
+        $history = ProductHistories::where('product_fk', $product->id)->get();
+        return view('dashboard', ['section' => 'history', 'table_type' => 2, 'product_histories' => $history, 'i' => 0]);
     }
 }
 

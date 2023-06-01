@@ -50,14 +50,12 @@
           <td>{{ $expense->stored_at }}</td>
           <td>
               <form action="{{ route('expenses.destroy',$expense->id) }}" method="POST">
-                  
-                  {{-- <a class="btn btn-info" href="{{ route('articles.show', $article->id) }}">Show</a> --}}
-                  {{-- <a class="btn btn-info" href="{{ route('ex.show', 1) }}">Show</a> --}}
-                  <a class="btn btn-primary" href="{{ route('expenses.edit', $expense->id) }}">Edit</a>
-                  @csrf
-                  @method('DELETE')
-                  
-                  <button type="submit" class="btn btn-danger">Hapus</button>
+                {{-- <a class="btn btn-info" href="{{ route('ex.show', 1) }}">Show</a> --}}
+                    <a class="btn btn-primary" href="{{ route('expenses.edit', $expense->id) }}">Edit</a>
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                    <a class="btn btn-info" href="{{ route('expense.history', $expense->id) }}">Riwayat</a>
               </form>
           </td>
       </tr>

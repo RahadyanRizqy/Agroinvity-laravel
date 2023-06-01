@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Validation\ValidationException;
 use App\Models\Expenses;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -69,6 +70,7 @@ class ExpenseController extends Controller
     
             $input['account_fk'] = Auth::id();
             $input['expense_type_fk'] = $type_id;
+            $input['stored_at'] = Carbon::now()->format('Y-m-d H:i:s');
             
             $expenses = Expenses::where('name', $input['name'])
                                 ->where('account_fk', Auth::id())
@@ -149,7 +151,7 @@ class ExpenseController extends Controller
                 'quantity' => 'required',
                 'price_per_qty' => 'required',
             ]);
-              
+            
             $expense->update($input);
     
             return redirect()->route('section.expenses', ['type_id' => $expense->expense_type_fk])

@@ -20,6 +20,7 @@
             <th>Email</th>
             <th>No. HP</th>
             <th>Waktu Pendaftaran</th>
+            <th>Status</th>
         </tr>
         @foreach ($accounts as $account)
         <tr>
@@ -28,16 +29,23 @@
             <td>{{ $account->email }}</td>
             <td>{{ $account->phone_number }}</td>
             <td>{{ $account->registered_at }}</td>
+            @if ($account->status == 1)
+                <td>Aktif</td>
+            @else
+                <td>Nonaktif</td>
+            @endif
         </tr>
         @endforeach
+    </table>
     @elseif(Auth::user()->account_type_fk == 2)
     <h1 class="title">Data Akun Pegawai</h1>
+    
     @if($accounts->count() == 0)
     <a class="btn btn-primary mb-3" href="{{ route('accounts.create')}}">Buat Akun Untuk Pegawai ></a>
     @endif
-    <table class="table table-bordered">
+
+    <table class="table" style="display: {{ $accounts->count() == 0 ? 'none' : ''}}">
         <tr>
-            <th>No</th>
             <th>Nama</th>
             <th>Email</th>
             <th>No. HP</th>
@@ -46,7 +54,6 @@
         </tr>
         @foreach ($accounts as $account)
         <tr>
-            <td>{{ ++$i }}</td>
             <td>{{ $account->fullname }}</td>
             <td>{{ $account->email }}</td>
             <td>{{ $account->phone_number }}</td>
@@ -65,5 +72,6 @@
             </td>
         </tr>
         @endforeach
+    </table>
     @endif
 </main>

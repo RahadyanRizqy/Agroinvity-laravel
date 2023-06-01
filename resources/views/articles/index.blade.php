@@ -34,7 +34,7 @@
             <td>{{ ++$i }}</td>
             <td><img src="/image/{{ $article->image }}" width="100px"></td>
             <td>{{ $article->title }}</td>
-            <td>{{ $article->detail }}</td>
+            <td>{{ $article->text }}</td>
             <td>
                 <form action="{{ route('articles.destroy',$article->id) }}" method="POST">
                     

@@ -50,15 +50,16 @@
                     {{-- <a class="btn btn-info" href="{{ route('articles.show', $article->id) }}">Show</a> --}}
                     {{-- <a class="btn btn-info" href="{{ route('articles.show', 1) }}">Show</a> --}}
                     
-      
                     <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Edit</a>
                     
                     @csrf
                     @method('DELETE')
                     
                     <button type="submit" class="btn btn-danger">Delete</button>
+                    <a class="btn btn-info" href="{{ route('product.history', $product->id) }}">Riwayat</a>
                 </form>
             </td>
         </tr>
         @endforeach
+    </table>
 </main>

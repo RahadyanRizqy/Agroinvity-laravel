@@ -16,8 +16,9 @@ return new class extends Migration
             $table->id();
             $table->string('title', 255);
             $table->text('text');
-            // $table->string('image')->default(null)->nullable();
-            $table->timestamp("posted_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            $table->string('image')->nullable();
+            $table->timestamp("posted_at");
+            $table->timestamp("updated_at")->nullable();
             $table->unsignedBigInteger("account_fk")->default(1);
 
             $table->foreign("account_fk")

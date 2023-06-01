@@ -39,7 +39,7 @@
         <li><a href="{{ route('section.production') }}"><i class="fa-solid fa-truck-ramp-box icon"></i>Produksi</a></li>
       </ul>
     </li>
-    <li><a href="#"><i class='bx bx-history icon' ></i></i>Riwayat</a></li>
+    {{-- <li><a href="#"><i class='bx bx-history icon' ></i></i>Riwayat</a></li> --}}
     <li><a href="{{ route('section.account')}}"><i class='bx bxs-user-account icon'></i>Data Akun Pegawai</a></li>
     <li><a href="{{ route('section.article') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>
     <li><a href="{{ route('section.calculator') }}"><i class='bx bxs-calculator icon'></i> Kalkulator</a></li>
@@ -53,16 +53,9 @@
         <li><a href="{{ route('section.production') }}"><i class="fa-solid fa-truck-ramp-box icon"></i>Produksi</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#"><i class='bx bxs-data icon'></i> Pendataan <i class='bx bx-chevron-right icon-right' ></i></a>
-      <ul class="side-dropdown">
-        <li><a href="{{ route('section.expenses', ["type_id" => 1]) }}"><i class="fa-solid fa-boxes-stacked icon"></i>Bahan Baku</a></li>
-        <li><a href="{{ route('section.expenses', ["type_id" => 2]) }}"><i class="fa-solid fa-arrows-rotate icon"></i>Operasional</a></li>
-        <li><a href="{{ route('section.production') }}"><i class="fa-solid fa-truck-ramp-box icon"></i>Produksi</a></li>
-      </ul>
-    </li>
     <li><a href="{{ route('section.article') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>
     <li><a href="{{ route('section.calculator') }}"><i class='bx bxs-calculator icon'></i> Kalkulator</a></li>
+
     @else
     <li><a href="{{ route('accounts.index') }}"><i class='bx bxs-user-account icon'></i>Data Akun Mitra</a></li>
     <li><a href="{{ route('articles.index') }}"><i class='bx bxs-book icon'></i>Artikel</a></li>

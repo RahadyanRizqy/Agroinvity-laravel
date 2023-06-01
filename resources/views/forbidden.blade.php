@@ -44,11 +44,12 @@
     </style>
 @endpush
 
+@section('title', 'Akses Terlarang')
+
 @section('content')
-    <p>
+    <h1>
         403 | AKSES TERLARANG
-    </p>
+    </h1>
     {{-- <span> {{ dd(Auth::user()->load('accountType')->accountType->account_type_name) }}</span> --}}
-    <span>{{ dd(Auth::user()->fullname )}}</span>
     {{-- RELATION N+1 SOLVED --}}
 @endsection

@@ -70,6 +70,9 @@ Route::delete('expenses/{expense}/delete', [ExpenseController::class, 'destroy']
 Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
 Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->name('expenses.update');
 
+Route::get('dashboard/expense/{expense}/history', [DashboardController::class, 'indexExpenseHistory'])->name('expense.history');
+Route::get('dashboard/product/{product}/history', [DashboardController::class, 'indexProductHistory'])->name('product.history');
+
 // Route::get('product/create', [ProductController::class, 'create'])->name('product.create');
 // Route::post('product/store', [ProductController::class, 'store'])->name('product.store');
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Accounts;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,9 +44,24 @@ class LoginController extends Controller
             // ->with([
             //     'accountId' => Auth::id(),
             //   ]);
-
-            return redirect()->intended('dashboard');
-            // return redirect()->intended('forbidden');
+        
+            if (Auth::user()->account_type_fk == 1) {
+                return redirect()->intended('dashboard');
+            } else if (Auth::user()->account_type_fk == 2) {
+                if (Carbon::now()->diffInDays(Auth::user()->registered_at) > 30) {
+                    return back()->with('loginError', 'Akun nonaktif silahkan kontak admin untuk aktivasi.');
+                }
+                return redirect()->intended('dashboard');      
+                
+            } else {
+                if (Carbon::now()->diffInDays(Accounts::with('parentAcc')->find(Auth::id())->parentAcc->registered_at) > 30) {
+                    return back()->with('loginError', 'Akun mitra nonaktif, pegawai tidak bisa masuk.');
+                }
+                // if (Accounts::with('parentAcc')->find(Auth::id())->parentAcc->remaining_days < 0) {
+                //     return back()->with('loginError', 'Akun mitra nonaktif, pegawai tidak bisa masuk.');
+                // }
+                return redirect()->intended('dashboard');       
+            }
         }
 
         return back()->with('loginError', 'Akun tidak ada/salah password.');

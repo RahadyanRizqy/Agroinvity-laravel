@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string("password", 255);
             $table->bigInteger("phone_number");
             $table->boolean("status")->default(true);
-            $table->timestamp("registered_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            $table->timestamp("registered_at");
             // $table->timestamp("created_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
             // $table->timestamp("updated_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
             $table->timestamp("date_now")->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));

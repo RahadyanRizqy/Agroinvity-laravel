@@ -3,6 +3,7 @@
         <div class="row g-0">
             <div class="col-md-6 g-0">
                 <h1 class="title mb-2">Kalkulator</h1>
+                <p>Apabila tidak ada pemilihan tanggal, maka akan mengeluarkan data bulan ini.</p>
                 <form action="{{ route('section.calcresult')}}" method="POST">
                     @csrf
                     <div class="date-group mb-3">
@@ -49,6 +50,7 @@
                         <div class="buttons">
                             <button class="btn btn-primary mb-3" type="submit" name="action" value="product">Hitung Pemasukan Produk</button>
                         </div>
+                        @if (Auth::user()->account_type_fk == 2)
                         <div class="buttons">
                             <button class="btn btn-primary mb-3" type="submit" name="action" value="omzet">Hitung Omzet</button>
                         </div>
@@ -61,6 +63,7 @@
                         <div class="buttons">
                             <button class="btn btn-danger mb-3" type="submit" name="action" value="delete">Hapus History</button>
                         </div>
+                        @endif
                     </div>
                     {{-- <button id="showReportButton" class="btn btn-primary">Tampilkan</button> --}}
                 </form>

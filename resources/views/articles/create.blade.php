@@ -1,19 +1,46 @@
 @extends('master')
 
 @section('title', 'Agroinvity')
+
+@push('style')
+    <style>
+                body {
+            margin: 0;
+            padding: 0;
+            background-color:  #057455;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #263043;
+            width: 900px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.5rem;
+            box-shadow: 5px 5px 5px 5px #263043;
+            flex-direction: column;
+        }
+
+        .form-group {
+            width: 800px;
+            margin: 10px 10px;
+        }
+
+        label {
+            color: white;
+        }
+    </style>
+@endpush
   
-@section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Add New article</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('articles.index') }}"> Back</a>
-        </div>
-    </div>
-</div>
-     
+@section('content')     
 @if ($errors->any())
     <div class="alert alert-danger">
         <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -24,32 +51,28 @@
         </ul>
     </div>
 @endif
-     
-<form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
+
+<section class="main-container">
+    <div class="form-container">
+        <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
             <div class="form-group">
-                <strong>Name:</strong>
-                <input type="text" name="title" class="form-control" placeholder="Title">
+                <label for="title">Judul</label>
+                <input type="text" class="form-control" name="title" id="title" placeholder="cth: Tanam Pintar" required>
             </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
-                <strong>Detail:</strong>
-                <textarea class="form-control" style="height:150px" name="text" placeholder="Detail"></textarea>
+                <label for="article-content">Isi artikel</label>
+                <textarea class="form-control" name="text" id="text" rows="15" placeholder="cth: Sebagai seorang petani..." required></textarea>
             </div>
-        </div>
-        {{-- <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Image:</strong>
                 <input type="file" name="image" class="form-control" placeholder="image">
             </div>
-        </div> --}}
-        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a class="btn btn-primary" href="{{ route('articles.index') }}"> Back</a>
-        </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" name="save-btn">Tambahkan</button>
+                <a class="btn btn-danger" href="{{ route('articles.index') }}"> Back</a>
+            </div>
+        </form>
     </div>
-</form>
+</section>
 @endsection

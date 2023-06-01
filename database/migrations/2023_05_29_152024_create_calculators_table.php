@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('calculators', function (Blueprint $table) {
             $table->id();
             $table->string("histories");
-            $table->timestamp("stored_at")->default(Carbon::now()->format('Y-m-d H:i:s'));
+            $table->timestamp("stored_at");
             $table->unsignedBigInteger("account_fk");
 
             $table->foreign("account_fk")

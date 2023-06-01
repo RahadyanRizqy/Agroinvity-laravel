@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Articles;
 use App\Models\Products;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -39,17 +40,18 @@ class ArticleController extends Controller
         ]);
   
         $input = $request->all();
+        $input['posted_at'] = Carbon::now()->format('Y-m-d H:i:s');
   
-        // if ($image = $request->file('image')) {
-        //     $destinationPath = 'image/';
-        //     $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
-        //     $image->move($destinationPath, $profileImage);
-        //     $input['image'] = "$profileImage";
-        // }
+        if ($image = $request->file('image')) {
+            $destinationPath = 'image/';
+            $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+            $input['image'] = "$profileImage";
+        }
     
         Articles::create($input);
      
-        return redirect()->route('section.article')
+        return redirect()->route('articles.index')
             ->with('success','Articles posted successfully.');
     }
 
@@ -59,7 +61,7 @@ class ArticleController extends Controller
     public function show(Articles $article) # GO TO VIEW SHOW
     {
 
-        return view('articles.show',['article' => $article]);
+        return view('dashboard', ['article' => $article, 'section' => 'article_show']);
     }
 
     // public function show(Request $request)
@@ -92,14 +94,7 @@ class ArticleController extends Controller
   
         // $input = $request->all();
   
-        // // if ($image = $request->file('image')) {
-        // //     $destinationPath = 'image/';
-        // //     $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-        // //     $image->move($destinationPath, $profileImage);
-        // //     $input['image'] = "$profileImage";
-        // // }else{
-        // //     unset($input['image']);
-        // // }
+
           
         // $articles->update($input);
     
@@ -112,10 +107,19 @@ class ArticleController extends Controller
                 'title' => 'required',
                 'text' => 'required',
             ]);
+
+            if ($image = $request->file('image')) {
+                $destinationPath = 'image/';
+                $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
+                $image->move($destinationPath, $profileImage);
+                $input['image'] = "$profileImage";
+            } else {
+                unset($input['image']);
+            }
             
             $article->update($input);
 
-            return redirect()->route('section.article')
+            return redirect()->route('articles.index')
                 ->with('success','Data sudah diubah');
         
         } catch (\Exception $e) {
@@ -132,7 +136,7 @@ class ArticleController extends Controller
     {
         $article->delete();
      
-        return redirect()->route('section.article')
+        return redirect()->route('articles.index')
             ->with('success','Artikel berhasil dihapus');
     }
 }

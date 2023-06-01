@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,10 @@ class ArticleSeeder extends Seeder
                 Ukuran luas perkebunan sangat relatif dan tergantung volume komoditas yang dihasilkan. Namun, suatu perkebunan memerlukan suatu luas minimum untuk menjaga keuntungan melalui sistem produksi yang diterapkannya. Kepemilikan lahan bukan merupakan syarat mutlak dalam perkebunan, sehingga untuk beberapa komoditas berkembang sistem sewa-menyewa lahan atau sistem pembagian usaha, seperti Perkebunan Inti Rakyat (PIR).
                 
                 Sejarah perkebunan di banyak negara kerap terkait dengan sejarah penjajahan/kolonialisme dan pembentukan suatu negara, termasuk di Indonesia.',
+            ],
+            'image' => [
+                'IMG20230601180700.jpeg',
+                'IMG20230601180908.jpg'
             ]);
         
             for ($i = 0; $i < count($articleSeed['title']); $i++) {
@@ -39,6 +44,8 @@ class ArticleSeeder extends Seeder
                     [
                         'title' => $articleSeed['title'][$i],
                         'text' => $articleSeed['text'][$i],
+                        'image' => $articleSeed['image'][$i],
+                        'posted_at' => Carbon::now()->format('Y-m-d H:i:s'),
                         // 'status' => $accountSeed['status'][$i],
                     ]
                 );

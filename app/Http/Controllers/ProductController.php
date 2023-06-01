@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +56,7 @@ class ProductController extends Controller
             ]);
 
             $input['account_fk'] = Auth::id();
+            $input['stored_at'] = Carbon::now()->format('Y-m-d H:i:s');
             
             $products = Products::where('name', $input['name'])->exists();
             if ($products) {

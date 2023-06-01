@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Accounts;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -38,6 +39,7 @@ class RegisterController extends Controller
             ]);
     
             $input['password'] = Hash::make($input['password']);
+            $input['registered_at'] = Carbon::now()->format('Y-m-d H:i:s');
         
             $accounts = Accounts::where('email', $input['email'])->exists();
             if ($accounts) {
