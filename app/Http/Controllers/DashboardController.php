@@ -271,7 +271,12 @@ class DashboardController extends Controller
     
                 function myfunction($num, $total)
                 {
-                    return ($num / $total) * 100;
+                    try {
+                        return ($num / $total) * 100;
+                    }
+                    catch (DivisionByZeroError $e) {
+                        return 0;
+                    }
                 }
     
                 $percentageArr = array($percentExp1, $percentExp2, $productPerc);
@@ -373,7 +378,12 @@ class DashboardController extends Controller
 
         function myfunction($num, $total)
         {
-            return ($num / $total) * 100;
+            try {
+                return ($num / $total) * 100;
+            }
+            catch (DivisionByZeroError $e) {
+                return 0;
+            }
         }
 
         $percentageArr = array($percentExp1, $percentExp2, $productPerc);
@@ -434,7 +444,12 @@ class DashboardController extends Controller
 
             function myfunction($num, $total)
             {
-                return ($num / $total) * 100;
+                try {
+                    return ($num / $total) * 100;
+                }
+                catch (DivisionByZeroError $e) {
+                    return 0;
+                }
             }
 
             $percentageArr = array($percentExp1, $percentExp2, $productPerc);
@@ -552,10 +567,11 @@ class DashboardController extends Controller
                 'to' => 'required',
             ]);
 
-            $calc = Calculator::where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get();
+            $dateFrom = Carbon::createFromFormat('d M Y', $input['from'])->format('Y-m-d');
+            $dateTo = Carbon::createFromFormat('d M Y', $input['to'])->format('Y-m-d');
             if ($action === 'material') {
                 // INSERT!
-                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 1)->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                $exp1 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 1)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
 
                 DB::table('calculators')->insert([
                     'histories' => "[Bahan Baku: $exp1]" . "({$input['from']} - {$input['to']})",
@@ -566,7 +582,7 @@ class DashboardController extends Controller
 
             } else if ($action === 'operational') {
                 // INSERT!
-                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 2)->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->where('expense_type_fk', 2)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
                 
                 DB::table('calculators')->insert([
                     'histories' => "[Operasional: $exp2]" . "({$input['from']} - {$input['to']})",
@@ -578,7 +594,7 @@ class DashboardController extends Controller
             } else if ($action === 'product') {
                 // INSERT!
 
-                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
 
                 DB::table('calculators')->insert([
                     'histories' => "[Produk: $pro]" . "({$input['from']} - {$input['to']})",
@@ -588,7 +604,7 @@ class DashboardController extends Controller
 
             } else if ($action === 'omzet') {
                 // INSERT!
-                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
                 DB::table('calculators')->insert([
                     'histories' => "[Omzet: $omzet]" . "({$input['from']} - {$input['to']})",
                     'account_fk' => Auth::id(),
@@ -598,7 +614,7 @@ class DashboardController extends Controller
             } else if ($action === 'loss') {
                 // INSERT!
 
-                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
                 DB::table('calculators')->insert([
                     'histories' => "[Kerugian: $loss]" . "({$input['from']} - {$input['to']})",
                     'account_fk' => Auth::id(),
@@ -607,7 +623,7 @@ class DashboardController extends Controller
 
             } else if ($action === 'profit') {
                 // INSERT!
-                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$input['from'], $input['to']])->get()->first()->total;
+                $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', Auth::id())->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
                 DB::table('calculators')->insert([
                     'histories' => "[Keuntungan: $pros]" . "({$input['from']} - {$input['to']})",
                     'account_fk' => Auth::id(),
