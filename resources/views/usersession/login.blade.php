@@ -8,6 +8,16 @@
 
 @section('content')
 <section class="login">
+    @if ($message = Session::get('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire(
+            'Berhasil',
+            '{{ $message }}',
+            'success'
+        )
+    </script>
+    @endif
     <div class="row g-0">
         <div class="col-md-6 g-0">
             <div class="form-left-side d-flex justify-content-center align-items-center">

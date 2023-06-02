@@ -182,7 +182,7 @@ class AccountController extends Controller
             }
             return redirect()->back()->withErrors(['error' => 'Email tidak ditemukan.'])->withInput();
         }   catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Input harus diisi dengan lengkap.'])->withInput();
+            return redirect()->back()->withErrors(['error' => 'Input harus diisi!'])->withInput();
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         }
@@ -221,13 +221,14 @@ class AccountController extends Controller
     
             if ($input['password'] != $input['confirm_password']) {
                 return redirect()->back()->withErrors(['error' => 'Isian password tidak sesuai.'])->withInput();
+            } else {
+                $input['password'] = Hash::make($input['password']);
+                  
+                Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
+        
+                return redirect()->route('login.index')->with('success','Password sudah diubah');
             }
     
-            $input['password'] = Hash::make($input['password']);
-              
-            Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
-    
-            return redirect()->route('homepage');
         
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
