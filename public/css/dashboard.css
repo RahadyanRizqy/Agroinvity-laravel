@@ -536,3 +536,7 @@ main .modal.fade.show .modal-dialog {
 		display: none;
 	}
 }
+
+.sweetalert {
+	z-index: 100;
+}

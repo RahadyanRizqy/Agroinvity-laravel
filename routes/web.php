@@ -73,6 +73,11 @@ Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->n
 Route::get('dashboard/expense/{expense}/history', [DashboardController::class, 'indexExpenseHistory'])->name('expense.history');
 Route::get('dashboard/product/{product}/history', [DashboardController::class, 'indexProductHistory'])->name('product.history');
 
+Route::get('password_reset/{account}', [AccountController::class, 'indexPasswordReset'])->name('password.reset');
+
+Route::get('/reset_password/{token}', [AccountController::class, 'checkToken']);
+
+
 // Route::get('product/create', [ProductController::class, 'create'])->name('product.create');
 // Route::post('product/store', [ProductController::class, 'store'])->name('product.store');
 
@@ -96,6 +101,10 @@ Route::get('/test', function() { return view('test'); });
 
 
 Route::post('/print', [DashboardController::class, 'printReport'])->name('getpdf');
+
+Route::get('/request_token', [AccountController::class, 'indexToken'])->name('request.token');
+Route::post('/request_token/sent', [AccountController::class, 'sendTokenRequest'])->name('send.token');
+
 // Route::get('/report_print', function() { return view('section/report_print'); })->name('viewpdf');
 // Route::resource('expenses',ExpenseControl;ler::class);
 // Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');

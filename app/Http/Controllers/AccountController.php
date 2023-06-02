@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\MailNotify;
 use App\Models\Accounts;
+use App\Models\Tokens;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Faker\Factory as Faker;
 
 class AccountController extends Controller
 {
@@ -138,5 +142,65 @@ class AccountController extends Controller
         $account->delete();
         return redirect()->route('section.account')
             ->with('success','Data berhasil dihapus');
+    }
+
+    public function indexPasswordReset(Accounts $account)
+    {
+        $faker = Faker::create();
+        $token = $faker->regexify('[A-Za-z0-9]{30}');
+        // return view('forms.password_reset', ['account' => $account]);
+    }
+
+    public function indexToken()
+    {
+        return view('forms.request_token');
+    }
+
+    public function sendTokenRequest(Request $request)
+    {
+        try {
+            $input = $request->validate([
+                'email' => 'required|email:dns|min:2|max:255|'
+            ]);
+            $emailExists = Accounts::where('email', $input['email'])->exists();
+            if ($emailExists) {
+                
+                $tokenGen = Faker::create()->regexify('[A-Za-z0-9]{30}');
+                $data = [
+                    'subject' => 'Agroinvity',
+                    'body' => "Ini link reset anda 127.0.0.1:8000/reset_password/{$tokenGen}",
+                ];
+        
+                Mail::to($input['email'])
+                    ->send(new MailNotify($data));
+                return view('forms.sent');
+                
+            }
+            return redirect()->back()->withErrors(['error' => 'Email tidak ditemukan.'])->withInput();
+        }   catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Input harus diisi dengan lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
+    }
+
+    public function checkToken($token)
+    {
+        $codeExists = Tokens::where('token', $token)->exists();
+        if ($codeExists) {
+            // $expired_at = Carbon::parse(Tokens::where('token', $token)->first()->expired_at);
+            // $requested_at = Carbon::parse(Tokens::where('token', $token)->first()->requested_at);
+            
+            // $same = Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'));
+
+            // if (!($same->between($requested_at, $expired_at))) {
+            //     Tokens::where(['token' => $token])->update(['status' => false]);
+            //     return view("forms.password_reset")->with('expiredstatus', 1);
+            // }
+            // return view("forms.password_reset")->with('expiredstatus', 0);
+            $request = Request();
+            dd("{$request->getHost()}".":8000");
+        }
+        dd(false);
     }
 }

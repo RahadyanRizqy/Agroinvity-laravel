@@ -13,6 +13,20 @@ if (count($dates) == 1) {
 }
 // $percentageChart = [5/10,4/10,1/10];
 @endphp
+<div class="sweetalert">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups',
+            text: '{{ $errors->first() }}',
+            position: 'top-center',
+            footer: '<a href=""></a>'
+        })
+    </script>
+    @endif
+</div>
 <main>
     <section class="report">
         <div class="row g-0">
@@ -55,8 +69,7 @@ if (count($dates) == 1) {
                         </script>
                     </div>
                     <button class="btn btn-primary" type="submit" name="action" value="show">Tampilkan</button>
-                    <button class="btn btn-danger" type="submit" name="action" value="print">Cetak PDF</button>
-                    {{-- <button id="showReportButton" class="btn btn-primary">Tampilkan</button> --}}
+                    <button class="btn btn-danger" type="submit" name="action" value="print" formtarget="_blank">Cetak PDF</button>
                 </form>
                 {{-- <a href="{{ route('getpdf') }}" class="btn btn-danger mt-3">Cetak PDF <i class="fa fa-file-pdf-o"></i></a> --}}
                 <script>

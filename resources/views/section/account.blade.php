@@ -21,6 +21,7 @@
             <th>No. HP</th>
             <th>Waktu Pendaftaran</th>
             <th>Status</th>
+            <th>Reset</th>
         </tr>
         @foreach ($accounts as $account)
         <tr>
@@ -34,6 +35,9 @@
             @else
                 <td>Nonaktif</td>
             @endif
+            <td>
+                <a href="{{ route('password.reset', $account->id)}}" class="btn btn-danger">Reset Password</a>
+            </td>
         </tr>
         @endforeach
     </table>

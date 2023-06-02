@@ -26,7 +26,7 @@
     .form-container {
         background-color: #263043;
         width: 500px;
-        height: 40vh;
+        height: 30vh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -44,42 +44,46 @@
         margin-top: 5px;
         margin-bottom: 10px;
     }
+    
+    .form-container > p {
+        color: white;
+    }
 
     .sweetalert {
         z-index: 100;
     }
-
-    .form-container > p {
-        color: white;
-    }
 </style>
 @endpush
 
+<div class="sweetalert">
+    {{ $message = ""}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups',
+            text: '{{ $errors->first() }}',
+            position: 'top-center',
+            footer: '<a href=""></a>'
+        })
+    </script>
+    @endif
+</div>
 @section('content')
 <div class="content">
     <div class="form-container">
-        @if ($expiredstatus == 0)
-        <p>Reset password pada email</p>
+        <p>Konfirmasikan email</p>
         <div class="edit-form col-md-8">
-            <form id="account-crud-form" action="#" method="POST" enctype="multipart/form-data">
+            <form id="account-crud-form" action="{{ route('send.token') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                @method('PUT')
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="cth: rezaocta@gmail.com">
                 </div>
-                <div class="form-group">
-                    <label for="password" class="form-label">Konfirmasi Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
-                </div>
-                <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
+                <button type="submit" class="btn btn-secondary" name="save-btn">Konfirmasi</button>
             </form>
         </div>
-        @else
-        <div class="edit-form col-md-8 expired-form">
-            <h3 class="text-center" style="color: white;">Token habis silahkan lakukan permintaan lagi</h3>
-        </div>
-        @endif
     </div>
 </div>
 @endsection

@@ -79,80 +79,8 @@ class DashboardController extends Controller
     public function showReportResults(Request $request) {
         $action = $request->input('action');
         
-        if ($action === 'show') {
-            $input = $request->validate([
-                'from' => 'required',
-                'to' => 'required',
-            ]);
-            
-            $id = Auth::id();
-            $dateFrom = Carbon::createFromFormat('d M Y', $input['from'])->format('Y-m-d');
-            $dateTo = Carbon::createFromFormat('d M Y', $input['to'])->format('Y-m-d');
-            $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->p;
-            $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->e;
-    
-    
-            $percentExp1 = Expenses::where('expense_type_fk', 1)
-                    ->where('account_fk', Auth::id())
-                    ->whereBetween('stored_at', [$dateFrom, $dateTo])
-                    ->count();
-            $percentExp2 = Expenses::where('expense_type_fk', 2)
-                    ->where('account_fk', Auth::id())
-                    ->whereBetween('stored_at', [$dateFrom, $dateTo])
-                    ->count();
-            $productPerc = ProductHistories::where('account_fk', Auth::id())
-                    ->whereBetween('updated_at', [$dateFrom, $dateTo])
-                    ->count();
-    
-            $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                    ->where('account_fk', 2)
-                    ->whereBetween("updated_at", [$dateFrom, $dateTo])
-                    ->groupBy('updated_at')
-                    ->get();
-    
-            $lineDates = [];
-            $lineValues = [];
-    
-            foreach ($lineResult as $dv) {
-                $lineDates[] = $dv['updated_at'];
-                $lineValues[] = $dv['CALC'];
-            }
-    
-            function mapperCentage($num, $total)
-            {
-                try {
-                    return ($num / $total) * 100;
-                }
-                catch (DivisionByZeroError $e) {
-                    return 0;
-                }
-            }
-    
-            $percentageArr = array($percentExp1, $percentExp2, $productPerc);
-            $c = array_sum($percentageArr);
-            $percentageChart = [];
-    
-            foreach ($percentageArr as $num) {
-                $percentage = mapperCentage($num, $c);
-                $percentageChart[] = $percentage;
-            }
-    
-            return view('dashboard', 
-            [
-                'section' => 'report', 
-                'incomes' => $products, 
-                'expenses' => $expenses, 
-                'datefrom' => $dateFrom, 
-                'dateto' => $dateTo, 
-                'percentageChart' => $percentageChart, 
-                'percentageArr' => $percentageArr,
-                'dates' => $lineDates, 
-                'lineChart' => $lineValues,
-                
-            ]);
-        } else if ($action === 'print') {
-
-            if ($request->filled('from') && $request->filled('to')) {
+        try {
+            if ($action === 'show') {
                 $input = $request->validate([
                     'from' => 'required',
                     'to' => 'required',
@@ -191,7 +119,7 @@ class DashboardController extends Controller
                     $lineValues[] = $dv['CALC'];
                 }
         
-                function mapperCentageReport($num, $total)
+                function mapperCentage($num, $total)
                 {
                     try {
                         return ($num / $total) * 100;
@@ -206,12 +134,13 @@ class DashboardController extends Controller
                 $percentageChart = [];
         
                 foreach ($percentageArr as $num) {
-                    $percentage = mapperCentageReport($num, $c);
+                    $percentage = mapperCentage($num, $c);
                     $percentageChart[] = $percentage;
                 }
         
-                return view('section/report_print', 
+                return view('dashboard', 
                 [
+                    'section' => 'report', 
                     'incomes' => $products, 
                     'expenses' => $expenses, 
                     'datefrom' => $dateFrom, 
@@ -222,125 +151,149 @@ class DashboardController extends Controller
                     'lineChart' => $lineValues,
                     
                 ]);
-                // $pdf = app('dompdf.wrapper');
-                // $pdf->loadView('section/report_print', 
-                // [
-                //     'incomes' => $products, 
-                //     'expenses' => $expenses, 
-                //     'datefrom' => $dateFrom, 
-                //     'dateto' => $dateTo, 
-                //     'percentageChart' => $percentageChart, 
-                //     'percentageArr' => $percentageArr,
-                //     'dates' => $lineDates, 
-                //     'lineChart' => $lineValues,
+            } else if ($action === 'print') {
+    
+                if ($request->filled('from') && $request->filled('to')) {
+                    $input = $request->validate([
+                        'from' => 'required',
+                        'to' => 'required',
+                    ]);
                     
-                // ]);
-                // return $pdf->download('laporan-1.pdf');
-            }
-            else {
-
-                $id = Auth::id();
-                $currentMonth = Carbon::now()->format('Y-m');
-                $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->p;
-                $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->e;
-                
-                $percentExp1 = Expenses::where('expense_type_fk', 1)
-                                ->where('account_fk', Auth::id())
-                                ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
-                                ->count();
-                $percentExp2 = Expenses::where('expense_type_fk', 2)
-                                ->where('account_fk', Auth::id())
-                                ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
-                                ->count();
-                $productPerc = Products::where('account_fk', Auth::id())
-                                ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
-                                ->count();
-    
-                $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                                ->where('account_fk', 2)
-                                ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
-                                ->groupBy('updated_at')
-                                ->get();
-    
-                $lineDates = [];
-                $lineValues = [];
-    
-                foreach ($lineResult as $dv) {
-                    $lineDates[] = $dv['updated_at'];
-                    $lineValues[] = $dv['CALC'];
-                }
-    
-                function myfunction($num, $total)
-                {
-                    try {
-                        return ($num / $total) * 100;
+                    $id = Auth::id();
+                    $dateFrom = Carbon::createFromFormat('d M Y', $input['from'])->format('Y-m-d');
+                    $dateTo = Carbon::createFromFormat('d M Y', $input['to'])->format('Y-m-d');
+                    $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->p;
+                    $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->e;
+            
+            
+                    $percentExp1 = Expenses::where('expense_type_fk', 1)
+                            ->where('account_fk', Auth::id())
+                            ->whereBetween('stored_at', [$dateFrom, $dateTo])
+                            ->count();
+                    $percentExp2 = Expenses::where('expense_type_fk', 2)
+                            ->where('account_fk', Auth::id())
+                            ->whereBetween('stored_at', [$dateFrom, $dateTo])
+                            ->count();
+                    $productPerc = ProductHistories::where('account_fk', Auth::id())
+                            ->whereBetween('updated_at', [$dateFrom, $dateTo])
+                            ->count();
+            
+                    $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
+                            ->where('account_fk', 2)
+                            ->whereBetween("updated_at", [$dateFrom, $dateTo])
+                            ->groupBy('updated_at')
+                            ->get();
+            
+                    $lineDates = [];
+                    $lineValues = [];
+            
+                    foreach ($lineResult as $dv) {
+                        $lineDates[] = $dv['updated_at'];
+                        $lineValues[] = $dv['CALC'];
                     }
-                    catch (DivisionByZeroError $e) {
-                        return 0;
+            
+                    function mapperCentageReport($num, $total)
+                    {
+                        try {
+                            return ($num / $total) * 100;
+                        }
+                        catch (DivisionByZeroError $e) {
+                            return 0;
+                        }
                     }
+            
+                    $percentageArr = array($percentExp1, $percentExp2, $productPerc);
+                    $c = array_sum($percentageArr);
+                    $percentageChart = [];
+            
+                    foreach ($percentageArr as $num) {
+                        $percentage = mapperCentageReport($num, $c);
+                        $percentageChart[] = $percentage;
+                    }
+            
+                    return view('section/report_print', 
+                    [
+                        'incomes' => $products, 
+                        'expenses' => $expenses, 
+                        'datefrom' => $dateFrom, 
+                        'dateto' => $dateTo, 
+                        'percentageChart' => $percentageChart, 
+                        'percentageArr' => $percentageArr,
+                        'dates' => $lineDates, 
+                        'lineChart' => $lineValues,
+                        
+                    ]);
                 }
+                else {
     
-                $percentageArr = array($percentExp1, $percentExp2, $productPerc);
-                $c = array_sum($percentageArr);
-                $percentageChart = [];
-    
-                foreach ($percentageArr as $num) {
-                    $percentage = myfunction($num, $c);
-                    $percentageChart[] = $percentage;
+                    $id = Auth::id();
+                    $currentMonth = Carbon::now()->format('Y-m');
+                    $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->p;
+                    $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->e;
+                    
+                    $percentExp1 = Expenses::where('expense_type_fk', 1)
+                                    ->where('account_fk', Auth::id())
+                                    ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                                    ->count();
+                    $percentExp2 = Expenses::where('expense_type_fk', 2)
+                                    ->where('account_fk', Auth::id())
+                                    ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                                    ->count();
+                    $productPerc = Products::where('account_fk', Auth::id())
+                                    ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                                    ->count();
+        
+                    $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
+                                    ->where('account_fk', 2)
+                                    ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
+                                    ->groupBy('updated_at')
+                                    ->get();
+        
+                    $lineDates = [];
+                    $lineValues = [];
+        
+                    foreach ($lineResult as $dv) {
+                        $lineDates[] = $dv['updated_at'];
+                        $lineValues[] = $dv['CALC'];
+                    }
+        
+                    function myfunction($num, $total)
+                    {
+                        try {
+                            return ($num / $total) * 100;
+                        }
+                        catch (DivisionByZeroError $e) {
+                            return 0;
+                        }
+                    }
+        
+                    $percentageArr = array($percentExp1, $percentExp2, $productPerc);
+                    $c = array_sum($percentageArr);
+                    $percentageChart = [];
+        
+                    foreach ($percentageArr as $num) {
+                        $percentage = myfunction($num, $c);
+                        $percentageChart[] = $percentage;
+                    }
+                    
+        
+                    return view('section/report_print', 
+                    [
+                        'incomes' => $products, 
+                        'expenses' => $expenses, 
+                        'percentageChart' => $percentageChart, 
+                        'percentageArr' => $percentageArr, 
+                        'dates' => $lineDates, 
+                        'lineChart' => $lineValues
+                    ]);
                 }
-                
-    
-                return view('section/report_print', 
-                [
-                    'incomes' => $products, 
-                    'expenses' => $expenses, 
-                    'percentageChart' => $percentageChart, 
-                    'percentageArr' => $percentageArr, 
-                    'dates' => $lineDates, 
-                    'lineChart' => $lineValues
-                ]);
-
-                // $pdf = app('dompdf.wrapper');
-                // $pdf->loadView('section/report_print', 
-                // [
-                //     'incomes' => $products, 
-                //     'expenses' => $expenses, 
-                //     'percentageChart' => $percentageChart, 
-                //     'percentageArr' => $percentageArr, 
-                //     'dates' => $lineDates, 
-                //     'lineChart' => $lineValues
-                // ]);
-                // return $pdf->download('laporan-1.pdf');
             }
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Input tanggal harus dipilih dengan benar.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
         }
-
-        // try {
-        //     $input = $request->validate([
-        //         'from' => 'required',
-        //         'to' => 'required',
-        //     ]);
-
-        //     $id = Auth::id();
-        //     $dateFrom = $input['from'];
-        //     $dateTo = $input['to'];
-        //     $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->p;
-        //     $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->e;
-
-        //     return view('dashboard', ['section' => 'report', 'incomes' => 1, 'expenses' => 1]);
-        
-        //     // Expenses::create($input);
-        //     // if ($type_id == 1) {
-        //         //     return redirect()->route('section.expenses', ['type_id' => $type_id])->with('success','Bahan baku berhasil diinput');
-        //         // } else if ($type_id == 2) {
-        //             //     return redirect()->route('section.expenses', ['type_id' => $type_id])->with('success','Operasional berhasil diinput');
-        //             // }
-        // } catch (\Exception $e) {
-            //     return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
-            // } catch (ValidationException $e) {
-                //     return redirect()->back()->withErrors($e->errors())->withInput();
-                // }
-                
-        
         return view('dashboard', ['section' => 'report']);
     }
 
