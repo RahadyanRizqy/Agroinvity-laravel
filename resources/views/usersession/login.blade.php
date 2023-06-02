@@ -30,8 +30,23 @@
                     </div>
                     <div class="form-group">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="Masukkan password anda" required>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan password anda" required>
                     </div>
+                        <input type="checkbox" id="showPasswordCheckbox"><span style="color: white"> Tampilkan/Sembunyikan password</span><br>
+                        <script>
+                            $(document).ready(function() {
+                                $('#showPasswordCheckbox').change(function() {
+                                    var passwordField = $('#password');
+                                    var isChecked = $(this).is(':checked');
+                                    
+                                    if (isChecked) {
+                                        passwordField.attr('type', 'text');
+                                    } else {
+                                        passwordField.attr('type', 'password');
+                                    }
+                                    });
+                                });
+                        </script>
                         <button type="submit" class="btn form-button btn-success">Masuk</button>
                     <div>
                         <span class="ask">Belum punya akun? <a href="register">Daftar</a> sekarang juga!</span>
@@ -41,7 +56,7 @@
                         <span class="warning" style="color: white;">{{session('loginError')}}</span>
                     </div>
                     <div class="mt-1 col-md-12">
-                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="https://wa.me/6288804897436">kontak admin</a></span>
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a href="{{ route('request.token')}}" style="color: white" target="_blank"> reset password</a></span>
                     </div>
                     @else
                     <a href="{{ route('request.token')}}" style="color: white" target="_blank">Lupa password?</a>

@@ -14,4 +14,8 @@ class Tokens extends Model
     ];
 
     public $timestamps = false;
+
+    public function tokenOf() {
+        return $this->belongsTo(Accounts::class, 'account_fk');
+    }
 }

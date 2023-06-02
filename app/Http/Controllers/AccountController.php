@@ -166,9 +166,13 @@ class AccountController extends Controller
             if ($emailExists) {
                 
                 $tokenGen = Faker::create()->regexify('[A-Za-z0-9]{30}');
+                Tokens::create([
+                    'token' => $tokenGen, 
+                    'account_fk' => Accounts::where('email', $input['email'])->first()->id, 
+                ]);
                 $data = [
                     'subject' => 'Agroinvity',
-                    'body' => "Ini link reset anda 127.0.0.1:8000/reset_password/{$tokenGen}",
+                    'body' => "Ini link reset anda 127.0.0.1:8000/reset_password/{$tokenGen} . Link ini akan berakhir dalam 5 menit",
                 ];
         
                 Mail::to($input['email'])
@@ -186,8 +190,11 @@ class AccountController extends Controller
 
     public function checkToken($token)
     {
-        $codeExists = Tokens::where('token', $token)->exists();
-        if ($codeExists) {
+        $tokenExists = Tokens::where('token', $token)->exists();
+        if ($tokenExists) {
+            $tokenAcc = Tokens::with('tokenOf')->where('token', $token)->first()->tokenOf;
+            return view('forms.password_reset', ['account' => $tokenAcc, 'expiredstatus' => 0]);
+
             // $expired_at = Carbon::parse(Tokens::where('token', $token)->first()->expired_at);
             // $requested_at = Carbon::parse(Tokens::where('token', $token)->first()->requested_at);
             
@@ -198,9 +205,34 @@ class AccountController extends Controller
             //     return view("forms.password_reset")->with('expiredstatus', 1);
             // }
             // return view("forms.password_reset")->with('expiredstatus', 0);
-            $request = Request();
-            dd("{$request->getHost()}".":8000");
+            // dd("{$request->getHost()}".":8000");
         }
         dd(false);
+    }
+
+    public function doResetPassword(Request $request, $id) 
+    {
+        try {
+            
+            $input = $request->validate([
+                'password' => 'required|min:2|max:255',
+                'confirm_password' => 'required|min:2|max:255',
+            ]);
+    
+            if ($input['password'] != $input['confirm_password']) {
+                return redirect()->back()->withErrors(['error' => 'Isian password tidak sesuai.'])->withInput();
+            }
+    
+            $input['password'] = Hash::make($input['password']);
+              
+            Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
+    
+            return redirect()->route('homepage');
+        
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
     }
 }

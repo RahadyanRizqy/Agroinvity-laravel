@@ -25,7 +25,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function() {
     return view('homepage');
-});
+})->name('homepage');
 
 Route::get('/service', function() {
     return "Draft";
@@ -75,7 +75,6 @@ Route::get('dashboard/product/{product}/history', [DashboardController::class, '
 
 Route::get('password_reset/{account}', [AccountController::class, 'indexPasswordReset'])->name('password.reset');
 
-Route::get('/reset_password/{token}', [AccountController::class, 'checkToken']);
 
 
 // Route::get('product/create', [ProductController::class, 'create'])->name('product.create');
@@ -102,9 +101,10 @@ Route::get('/test', function() { return view('test'); });
 
 Route::post('/print', [DashboardController::class, 'printReport'])->name('getpdf');
 
+Route::get('/reset_password/{token}', [AccountController::class, 'checkToken']);
 Route::get('/request_token', [AccountController::class, 'indexToken'])->name('request.token');
 Route::post('/request_token/sent', [AccountController::class, 'sendTokenRequest'])->name('send.token');
-
+Route::put('/reset_password/{token}/update', [AccountController::class, 'doResetPassword'])->name('token.accupdate');
 // Route::get('/report_print', function() { return view('section/report_print'); })->name('viewpdf');
 // Route::resource('expenses',ExpenseControl;ler::class);
 // Route::post('/expenses/{type_id}', 'ExpenseController@store')->name('expenses.store');
