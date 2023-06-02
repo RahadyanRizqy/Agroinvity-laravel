@@ -18,8 +18,8 @@ class ExpenseSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        $startDate = '2023-04-25 00:00:00';
-        $endDate = '2023-05-31 00:00:00';
+        $startDate = '2023-05-25 00:00:00';
+        $endDate = '2023-06-31 00:00:00';
         $expenseSeed = array(
                 // nama, qty, harga, user, tipe
 

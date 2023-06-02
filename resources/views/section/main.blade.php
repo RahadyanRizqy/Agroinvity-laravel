@@ -10,7 +10,15 @@
   </script>
   @endif
   <h1 class="title">Dashboard</h1>
-  <h5 class="greet">Selamat datang {{ Auth::user()->fullname }}!</h5>
+  @if (Auth::user()->account_type_fk == 1)
+    <h5 class="greet">Selamat datang Superadmin, {{ Auth::user()->fullname }}!</h5>
+  @elseif (Auth::user()->account_type_fk == 2)
+    <h5 class="greet">Selamat datang Mitra, {{ Auth::user()->fullname }}!</h5>
+  @elseif (Auth::user()->account_type_fk == 3)
+    <h5 class="greet">Selamat datang Pegawai, {{ Auth::user()->fullname }}!</h5>
+  @else
+    <h5 class="greet">Selamat datang Null, {{ Auth::user()->fullname }}!</h5>
+  @endif
   {{-- <ul class="breadcrumbs">
     <li><a href="#">Selamat datang {{ Auth::user()->fullname }}</a></li>
     <li class="divider">/</li>

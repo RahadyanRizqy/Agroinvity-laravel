@@ -79,7 +79,9 @@
     <div class="profile">
       <img src="/assets/img/account.png" alt="">
       <ul class="profile-link">
+        @if (Auth::user()->account_type_fk == 2)
         <li><a href="{{ route('dashboard.profile')}}"><i class='bx bxs-user-circle icon' ></i> Profile</a></li>
+        @endif
         <!-- <li><a href="#"><i class='bx bxs-cog' ></i> Settings</a></li> -->
         <li><a href="{{ route('session.destroy')}}"><i class='bx bxs-log-out-circle' ></i> Logout</a></li>
       </ul>

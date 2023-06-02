@@ -26,7 +26,7 @@
     .form-container {
         background-color: #263043;
         width: 500px;
-        height: 40vh;
+        height: 50vh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -41,7 +41,7 @@
     }
     
     .form-group {
-        margin-top: 5px;
+        margin-top: 0px;
         margin-bottom: 10px;
     }
 
@@ -74,7 +74,8 @@
 <div class="content">
     <div class="form-container">
         @if ($expiredstatus == 0)
-        <p>Reset password pada email</p>
+        <p class="text-center">Reset password pada email</p>
+        <p class="text-center">{{$account->email}}</p>
         <div class="edit-form col-md-8">
             <form id="account-crud-form" action="{{ route('token.accupdate', $account->id)}}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -108,9 +109,13 @@
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
             </form>
         </div>
-        @else
+        @elseif ($expiredstatus == 1)
         <div class="edit-form col-md-8 expired-form">
             <h3 class="text-center" style="color: white;">Token habis silahkan lakukan permintaan lagi</h3>
+        </div>
+        @elseif ($expiredstatus == 2)
+        <div class="edit-form col-md-8 expired-form">
+            <h3 class="text-center" style="color: white;">Token tidak valid</h3>
         </div>
         @endif
     </div>

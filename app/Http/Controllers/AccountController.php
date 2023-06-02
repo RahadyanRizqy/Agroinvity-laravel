@@ -192,22 +192,13 @@ class AccountController extends Controller
     {
         $tokenExists = Tokens::where('token', $token)->exists();
         if ($tokenExists) {
+            Tokens::where('token', $token)->first()->expired_at;
+            Tokens::where('token', $token)->first()->requested_at;
+            if (Carbon::parse(Carbon::now()->format('Y-m-d H:i:s')))
             $tokenAcc = Tokens::with('tokenOf')->where('token', $token)->first()->tokenOf;
             return view('forms.password_reset', ['account' => $tokenAcc, 'expiredstatus' => 0]);
-
-            // $expired_at = Carbon::parse(Tokens::where('token', $token)->first()->expired_at);
-            // $requested_at = Carbon::parse(Tokens::where('token', $token)->first()->requested_at);
-            
-            // $same = Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'));
-
-            // if (!($same->between($requested_at, $expired_at))) {
-            //     Tokens::where(['token' => $token])->update(['status' => false]);
-            //     return view("forms.password_reset")->with('expiredstatus', 1);
-            // }
-            // return view("forms.password_reset")->with('expiredstatus', 0);
-            // dd("{$request->getHost()}".":8000");
         }
-        dd(false);
+        return view('forms.password_reset', ['account' => false, 'expiredstatus' => 1]);
     }
 
     public function doResetPassword(Request $request, $id) 

@@ -21,7 +21,7 @@
             <th>No. HP</th>
             <th>Waktu Pendaftaran</th>
             <th>Status</th>
-            <th>Reset</th>
+            {{-- <th>Reset</th> --}}
         </tr>
         @foreach ($accounts as $account)
         <tr>
@@ -35,9 +35,9 @@
             @else
                 <td>Nonaktif</td>
             @endif
-            <td>
+            {{-- <td>
                 <a href="{{ route('password.reset', $account->id)}}" class="btn btn-danger">Reset Password</a>
-            </td>
+            </td> --}}
         </tr>
         @endforeach
     </table>
@@ -71,7 +71,7 @@
                     @csrf
                     @method('DELETE')
                     
-                    <button type="submit" class="btn btn-danger">Hapus</button>
+                    {{-- <button type="submit" class="btn btn-danger">Hapus</button> --}}
                 </form>
             </td>
         </tr>

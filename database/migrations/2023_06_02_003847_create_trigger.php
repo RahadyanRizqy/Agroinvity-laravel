@@ -38,7 +38,6 @@ return new class extends Migration
 
             VALUES 
             (NEW.name, NEW.price_per_qty, NEW.total_qty, NEW.sold_products, NEW.stock_products, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.id, NEW.account_fk);
-
         END IF;
         END;
         ");
