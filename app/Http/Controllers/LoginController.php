@@ -64,6 +64,13 @@ class LoginController extends Controller
             }
         }
 
+        else {
+            if (Accounts::where('email', $credentials['email'])->first()->account_type_fk == 1) {
+                return back()->with('adminError', 'Bila admin salah/lupa password silahkan reset di database');
+            } else if (Accounts::where('email', $credentials['email'])->first()->account_type_fk == 3) {
+                return back()->with('workerError', 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait');
+            }
+        }
         return back()->with('loginError', 'Akun tidak ada/salah password.');
 
     }

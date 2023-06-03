@@ -39,19 +39,24 @@
         }
     </style>
 @endpush
-  
-@section('content')     
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 
+<div class="sweetalert">
+    {{ $message = ""}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups',
+            text: '{{ $errors->first() }}',
+            position: 'top-center',
+            footer: '<a href=""></a>'
+        })
+    </script>
+    @endif
+</div>
+
+@section('content')
 <section class="main-container">
     <div class="form-container">
         <form action="{{ route('articles.update', $article->id) }}" method="POST" enctype="multipart/form-data">
@@ -59,11 +64,11 @@
             @method('PUT')
             <div class="form-group">
                 <label for="title">Judul</label>
-                <input type="text" class="form-control" name="title" id="title" placeholder="cth: Tanam Pintar" value="{{ $article->title }}" required>
+                <input type="text" class="form-control" name="title" id="title" placeholder="cth: Tanam Pintar" value="{{ $article->title }}">
             </div>
             <div class="form-group">
                 <label for="article-content">Isi artikel</label>
-                <textarea class="form-control" name="text" id="text" rows="15" placeholder="cth: Sebagai seorang petani..." required>{{ $article->text }}</textarea>
+                <textarea class="form-control" name="text" id="text" rows="15" placeholder="cth: Sebagai seorang petani...">{{ $article->text }}</textarea>
             </div>
             <div class="form-group">
                 <label for="article-content">Gambar</label>

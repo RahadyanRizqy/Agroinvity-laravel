@@ -33,26 +33,37 @@ class ArticleController extends Controller
      */
     public function store(Request $request) # STORING PROCESS
     {
-        $request->validate([
-            'title' => 'required',
-            'text' => 'required',
-            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-  
-        $input = $request->all();
-        $input['posted_at'] = Carbon::now()->format('Y-m-d H:i:s');
-  
-        if ($image = $request->file('image')) {
-            $destinationPath = 'image/';
-            $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-            $input['image'] = "$profileImage";
+        try {
+            $request->validate([
+                'title' => 'required',
+                'text' => 'required',
+                // 'image' => 'required|image|mimes:jpeg,png,jpg,svg|max:5120',
+            ],
+            // [
+            //     'image.required' => 'File yang diupload harus berformat jpeg,png,jpg,svg dan harus <= 5mb'
+            // ]
+        );
+      
+            $input = $request->all();
+            $input['posted_at'] = Carbon::now()->format('Y-m-d H:i:s');
+      
+            if ($image = $request->file('image')) {
+                $destinationPath = 'image/';
+                $profileImage = "IMG" . date('YmdHis') . "." . $image->getClientOriginalExtension();
+                $image->move($destinationPath, $profileImage);
+                $input['image'] = "$profileImage";
+            }
+        
+            Articles::create($input);
+         
+            return redirect()->route('articles.index')
+                ->with('success','Data artikel berhasil ditambahkan.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
         }
-    
-        Articles::create($input);
-     
-        return redirect()->route('articles.index')
-            ->with('success','Articles posted successfully.');
     }
 
     /**

@@ -27,7 +27,8 @@
             <th>Image</th>
             <th>Title</th>
             <th>Details</th>
-            <th width="280px">Action</th>
+            <th>Waktu Posting</th>
+            <th>Action</th>
         </tr>
         @foreach ($articles as $article)
         <tr>
@@ -35,6 +36,7 @@
             <td><img src="/image/{{ $article->image }}" width="100px"></td>
             <td>{{ $article->title }}</td>
             <td>{{ $article->text }}</td>
+            <td>{{ $article->posted_at}} </td>
             <td>
                 <form action="{{ route('articles.destroy',$article->id) }}" method="POST">
                     
@@ -47,7 +49,7 @@
                     @csrf
                     @method('DELETE')
                     
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
                 </form>
             </td>
         </tr>

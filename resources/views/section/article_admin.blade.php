@@ -1,20 +1,32 @@
 <main>
     <h1>Daftar Artikel</h1>
+    @if ($message = Session::get('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire(
+            'Berhasil',
+            '{{ $message }}',
+            'success'
+        )
+    </script>
+    @endif
     <a class="btn btn-primary mb-3" href="{{ route('articles.create')}}">+ Tambah Artikel</a>
     <table class="table table-bordered">
         <tr>
             <th>No</th>
             <th>Image</th>
             <th>Title</th>
-            <th>Content</th>
-            <th width="280px">Action</th>
+            <th width="400px">Content</th>
+            <th>Waktu Posting</th>
+            <th>Action</th>
         </tr>
         @foreach ($articles as $article)
         <tr>
             <td>{{ ++$i }}</td>
             <td><img src="/image/{{ $article->image }}" width="100px"></td>
             <td>{{ $article->title }}</td>
-            <td>{{ \Illuminate\Support\Str::limit($article->text, $limit = 300, $end="...") }}</td>
+            <td>{{ \Illuminate\Support\Str::limit($article->text, $limit = 250, $end="...") }}</td>
+            <td>{{ $article->posted_at }}</td>
             <td>
                 <form action="{{ route('articles.destroy',$article->id) }}" method="POST">
                     
@@ -27,7 +39,7 @@
                     @csrf
                     @method('DELETE')
                     
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
                 </form>
             </td>
         </tr>

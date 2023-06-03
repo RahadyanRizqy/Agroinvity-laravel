@@ -55,7 +55,7 @@
                     @csrf
                     @method('DELETE')
                     
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
                     <a class="btn btn-info" href="{{ route('product.history', $product->id) }}">Riwayat</a>
                 </form>
             </td>

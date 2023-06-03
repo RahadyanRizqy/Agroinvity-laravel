@@ -68,6 +68,14 @@
                     <div class="mt-1 col-md-12">
                         <span class="warning" style="color: white;">Bila lupa password silahkan <a href="{{ route('request.token')}}" style="color: white" target="_blank"> reset password</a></span>
                     </div>
+                    @elseif(session()->has('adminError'))
+                    <div class="mt-2">
+                        <span class="warning" style="color: white;">{{session('adminError')}}</span>
+                    </div>
+                    @elseif(session()->has('workerError'))
+                    <div class="mt-2">
+                        <span class="warning" style="color: white;">{{session('workerError')}}</span>
+                    </div>
                     @else
                     <a href="{{ route('request.token')}}" style="color: white" target="_blank">Lupa password?</a>
                     @endif

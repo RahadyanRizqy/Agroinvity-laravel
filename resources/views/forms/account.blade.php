@@ -58,16 +58,6 @@
             footer: '<a href=""></a>'
         })
     </script>
-    {{-- @elseif (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '{{ session('success') }}',
-                position: 'top-center',
-                footer: '<a href=""></a>'
-            })
-        </script> --}}
     @endif
 </div>
 

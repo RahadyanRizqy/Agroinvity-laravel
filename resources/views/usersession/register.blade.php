@@ -38,7 +38,7 @@
                         <span class="warning" style="color: white;">Akun sudah ada, Silahkan login!</span>
                     </div>
                     <div class="mt-1 col-md-12">
-                        <span class="warning" style="color: white;">Bila lupa password silahkan <a class="warning" style="color: white;" href="https://wa.me/6288804897436">kontak admin</a></span>
+                        <span class="warning" style="color: white;">Bila lupa password silahkan <a href="{{ route('request.token')}}" style="color: white" target="_blank"> reset password</a></span>
                     </div>
                     @endif
                 </form>

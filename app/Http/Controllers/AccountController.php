@@ -50,36 +50,42 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         try {
-            $input = $request->validate([
+            $request->validate([
                 'fullname' => 'required|max:255',
-                'email' => 'required|email:dns|min:2|max:255|unique:accounts',
+                'email' => 'required|email:dns|min:2|max:255',
                 'phone_number' => 'required|numeric|digits_between:10,20',
                 'password' => 'required|min:2|max:255',
             ]);
+
+            $input = $request->all();
             
+            $accounts = Accounts::where('email', $input['email'])->exists();
+            if ($accounts) {
+                return redirect()->back()->withErrors(['message' => 'Data sudah ada!']);
+            }            
+
             if (Auth::user()->account_type_fk == 2) {
                 $input['account_type_fk'] = 3;
                 $input['account_rel_fk'] = Auth::id();
             }
-            $input['password'] = Hash::make($input['password']);
-            $input['registered_at'] = Carbon::now()->format('Y-m-d H:i:s');
-        
-            $accounts = Accounts::where('email', $input['email'])->exists();
-            if ($accounts) {
-                return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
-            }            
-            Accounts::create($input);
-
-            if (Auth::user()->account_type_fk == 1) {
+            else if (Auth::user()->account_type_fk == 1) {
                 return redirect()->route('accounts.index')
                     ->with('success','Akun mitra berhasil dibuat');
             }
+            $input['password'] = Hash::make($input['password']);
+            $input['registered_at'] = Carbon::now()->format('Y-m-d H:i:s');
+            
+
+            Accounts::create($input);
+
             return redirect()->route('accounts.index')
                 ->with('success','Akun pegawai berhasil dibuat');
 
-        } catch (\Exception $e) {
+        } 
+        catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Form harus diisi secara lengkap.'])->withInput();
-        } catch (ValidationException $e) {
+        } 
+        catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         }
     }
@@ -158,13 +164,21 @@ class AccountController extends Controller
 
     public function sendTokenRequest(Request $request)
     {
+        
         try {
             $input = $request->validate([
                 'email' => 'required|email:dns|min:2|max:255|'
+            ], [
+                'email.required' => 'Input email harus diisi'
             ]);
             $emailExists = Accounts::where('email', $input['email'])->exists();
             if ($emailExists) {
                 
+                if (Accounts::where('email', $input['email'])->first()->account_type_fk == 1) {
+                    return redirect()->back()->withErrors(['error' => 'Bila admin salah/lupa password silahkan reset di database'])->withInput();
+                } else if (Accounts::where('email', $input['email'])->first()->account_type_fk == 3) {
+                    return redirect()->back()->withErrors(['error' => 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait.'])->withInput();
+                }
                 $tokenGen = Faker::create()->regexify('[A-Za-z0-9]{30}');
                 Tokens::create([
                     'token' => $tokenGen, 
@@ -172,17 +186,17 @@ class AccountController extends Controller
                 ]);
                 $data = [
                     'subject' => 'Agroinvity',
-                    'body' => "Ini link reset anda 127.0.0.1:8000/reset_password/{$tokenGen} . Link ini akan berakhir dalam 5 menit",
+                    'body' => "Ini link reset anda 127.0.0.1:8000/reset_password/{$tokenGen} . Link token ini akan berakhir dalam 5 menit",
                 ];
         
                 Mail::to($input['email'])
                     ->send(new MailNotify($data));
                 return view('forms.sent');
-                
             }
+
             return redirect()->back()->withErrors(['error' => 'Email tidak ditemukan.'])->withInput();
-        }   catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Input harus diisi!'])->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Input email harus diisi!'])->withInput();
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         }

@@ -30,7 +30,7 @@ class AccountSeeder extends Seeder
                 'Rafif',
             ],
             'email' => [
-                'sitikhoirunnisak@internetkeno.com',
+                'sitikhoirunnisak12@gmail.com',
                 'ekahaswidya@internetkeno.com',
                 'ilhamhibatul@internetkeno.com',
                 'radenrizqy@internetkeno.com',
@@ -65,8 +65,8 @@ class AccountSeeder extends Seeder
     
             ],
             'account_type_fk' => [
-                1,
                 2,
+                1,
                 2,
                 3,
                 3,
