@@ -107,63 +107,8 @@
 {!! $dataStringArray = array_map('strval', $data); !!}
 {!! $dataJson = json_encode($data); !!} --}}
 
-@php 
-  $data1 = [20, 40, 28, 51, 42, 109, 100]; 
-  $data2 = [11, 32, 45, 32, 34, 52, 41];
-@endphp
-
-<?php
-$dates = [
-    '2023-05-01 11:35:09',
-    '2023-05-06 11:35:09',
-    '2023-05-11 11:35:09',
-    '2023-05-16 11:35:09',
-    '2023-05-22 11:35:09',
-    '2023-05-28 11:35:09',
-    '2023-05-29 11:35:09',
-    '2023-05-30 11:35:09',
-];
-
-$convertedDates = [];
-foreach ($dates as $date) {
-    $dateTime = new DateTime($date);
-    $convertedDates[] = $dateTime->format('Y-m-d\TH:i:s.v\Z');
-}
-?>
-
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="/js/dashboard.js"></script>
-<script>
-    var options = {
-      series: [{
-      name: 'pemasukan',
-      data: <?php echo json_encode($data1, JSON_HEX_TAG); ?>
-    }],
-      chart: {
-      height: 350,
-      type: 'area'
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth'
-    },
-    xaxis: {
-      type: 'datetime',
-      // categories: ["2018-09-05T00:00:00.000Z", "2018-09-10T01:30:00.000Z", "2018-09-15T02:30:00.000Z", "2018-09-20T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-      categories: <?php echo json_encode($convertedDates, JSON_HEX_TAG); ?>
-    },
-    tooltip: {
-      x: {
-        format: 'dd/MM/yy HH:mm'
-      },
-    },
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>

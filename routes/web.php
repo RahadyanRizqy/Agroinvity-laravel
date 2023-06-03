@@ -25,7 +25,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function() {
     return view('homepage');
-})->name('homepage');
+});
 
 Route::get('/service', function() {
     return "Draft";

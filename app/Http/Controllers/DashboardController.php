@@ -25,8 +25,108 @@ class DashboardController extends Controller
 {
     public function showDashboard() # SHOW
     {
-        $logs = ActivityLogs::where('account_fk', Auth::id())->orderBy('id', 'DESC')->limit(5)->get();
-        return view('dashboard', ['section' => 'main', 'logs' => $logs]);
+        $currentMonth = Carbon::now()->format('Y-m');
+        $toId = Auth::id();
+        
+        $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        $pros2 = Products::select(DB::raw('SUM(sold_products) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        
+        $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        $loss2 = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        
+        $totalProsLoss = $pros + $loss;
+        $prosPercent = number_format(($pros/$totalProsLoss) * 100, 2);
+        $lossPercent = number_format(($loss/$totalProsLoss) * 100, 2);
+        
+        $logs = ActivityLogs::where('account_fk', $toId)->orderBy('id', 'DESC')->limit(5)->get();
+
+        $soldProd = Products::selectRaw('SUM(sold_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
+        $stockProd = Products::selectRaw('SUM(stock_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
+
+        $totalSoldStock = $soldProd + $stockProd;
+        $soldPercent = number_format(($soldProd/$totalSoldStock) * 100, 2);
+        $stockPercent = number_format(($stockProd/$totalSoldStock) * 100, 2);
+
+        $omzetTotal = Expenses::selectRaw('SUM(quantity*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
+        // $omzetPercent = number_format(($omzetTotal/$totalSoldStock) * 100, 2);
+        $omzetPercent = 100 - $soldPercent;
+
+
+        // GRAPHIC
+        $currentMonth = Carbon::now()->format('Y-m');
+        $percentExp1 = Expenses::where('expense_type_fk', 1)
+                        ->where('account_fk', Auth::id())
+                        ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                        ->count();
+        $percentExp2 = Expenses::where('expense_type_fk', 2)
+                        ->where('account_fk', Auth::id())
+                        ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                        ->count();
+        $productPerc = Products::where('account_fk', Auth::id())
+                        ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                        ->count();
+
+        $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
+                        ->where('account_fk', 2)
+                        ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
+                        ->groupBy('updated_at')
+                        ->get();
+
+        $lineDates = [];
+        $lineValues = [];
+
+        foreach ($lineResult as $dv) {
+            $lineDates[] = $dv['updated_at'];
+            $lineValues[] = $dv['CALC'];
+        }
+
+        function myGraph($num, $total)
+        {
+            try {
+                return ($num / $total) * 100;
+            }
+            catch (DivisionByZeroError $e) {
+                return 0;
+            }
+        }
+
+        $percentageArr = array($percentExp1, $percentExp2, $productPerc);
+        $c = array_sum($percentageArr);
+        $percentageChart = [];
+
+        foreach ($percentageArr as $num) {
+            $percentage = myGraph($num, $c);
+            $percentageChart[] = $percentage;
+        }
+        
+
+        // return view('dashboard', 
+        // [
+        //     'section' => 'report', 
+        //     'incomes' => $products, 
+        //     'expenses' => $expenses, 
+        //     'percentageChart' => $percentageChart, 
+        //     'percentageArr' => $percentageArr, 
+        //     'dates' => $lineDates, 
+        //     'lineChart' => $lineValues
+        // ]);
+
+        return view('dashboard', [
+            'section' => 'main', 
+            'logs' => $logs, 
+            'omzetPercent' => $omzetPercent,
+            'soldPercent' => $soldPercent,
+            'lossPercent' => $lossPercent,
+            'prosPercent' => $prosPercent,
+            'pros2' => $pros2,
+            'pros' => $pros,
+            'loss' => $loss,
+            'omzetTotal' => $omzetTotal,
+            'dates' => $lineDates,
+            'lineChart' => $lineValues,
+
+        ]);
+        // dd($prosPercent, $lossPercent);
     }
 
     public function indexExpense($type_id) {
@@ -719,5 +819,10 @@ class DashboardController extends Controller
         $history = ProductHistories::where('product_fk', $product->id)->get();
         return view('dashboard', ['section' => 'history', 'table_type' => 2, 'product_histories' => $history, 'i' => 0]);
     }
+
+    // public function dashboardValues()
+    // {
+
+    // }
 }
 
