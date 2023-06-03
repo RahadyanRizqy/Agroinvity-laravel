@@ -85,7 +85,7 @@
     </div>
     <div class="content-data">
       <div class="head">
-        <h3>Activities</h3>
+        <h3>Riwayat Aktivitas</h3>
         <div class="menu">
           <i class='bx bx-dots-horizontal-rounded icon'></i>
           <ul class="menu-link">
@@ -98,36 +98,22 @@
       <div class="chat-box">
         <div class="card-content">
           <div class="streamline">
+            @foreach ($logs as $log)
             <div class="sl-item sl-primary">
               <div class="sl-content">
-                <small class="text-muted">Pemasukan</small>
-                <p>Telah menginputkan data baru dengan id ?</p>
+                @if (Str::contains($log->logs, 'bahan baku'))
+                <small class="text-muted">Bahan Baku</small>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-1) }}</a></p>
+                @elseif (Str::contains($log->logs, 'operasional'))
+                <small class="text-muted">Operasional</small>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-1) }}</a></p>
+                @else
+                <small class="text-muted">Produk</small>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('product.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-1) }}</a></p>
+                @endif
               </div>
-            </div>
-            <div class="sl-item sl-danger">
-              <div class="sl-content">
-                <small class="text-muted">Pengeluaran</small>
-                <p>Telah mengupdate data dengan id ?</p>
-              </div>
-            </div>
-            <div class="sl-item sl-success">
-              <div class="sl-content">
-                <small class="text-muted">Pemasukan</small>
-                <p>Telah menghapus data dengan id ?</p>
-              </div>
-            </div>
-            <div class="sl-item">
-              <div class="sl-content">
-                <small class="text-muted">Laporan</small>
-                <p>Telah mengeksport file laporan ke PDF</p>
-              </div>
-            </div>
-            <div class="sl-item sl-warning">
-              <div class="sl-content">
-                <small class="text-muted">Pemasukan</small>
-                <p>Telah menambah data dengan id ?</p>
-              </div>
-            </div>
+            </div>    
+            @endforeach
           </div>
         </div>
       </div>

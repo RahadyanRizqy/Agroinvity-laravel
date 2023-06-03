@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Dompdf\Dompdf;
 use App\Http\Controllers\ArticleController;
 use App\Models\Accounts;
+use App\Models\ActivityLogs;
 use App\Models\Calculator;
 use App\Models\ExpenseHistories;
 use App\Models\ProductHistories;
@@ -24,7 +25,8 @@ class DashboardController extends Controller
 {
     public function showDashboard() # SHOW
     {
-        return view('dashboard', ['section' => 'main', 'accountId' => Auth::id()]);
+        $logs = ActivityLogs::where('account_fk', Auth::id())->orderBy('id', 'DESC')->limit(5)->get();
+        return view('dashboard', ['section' => 'main', 'logs' => $logs]);
     }
 
     public function indexExpense($type_id) {
@@ -613,7 +615,12 @@ class DashboardController extends Controller
                 return redirect()->route('section.calculator');
             }
 
-        } else {
+        } 
+        
+        else if ($request->filled('from') || $request->filled('to')) {
+            return redirect()->back()->withErrors(['error' => 'Input tanggal harus dipilih dengan benar.'])->withInput();
+        }
+        else {
             $currentMonth = Carbon::now()->format('Y-m');
             $toId = Auth::user()->id;
             if (Auth::user()->account_type_fk == 3) {

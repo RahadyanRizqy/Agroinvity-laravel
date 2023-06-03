@@ -81,7 +81,7 @@
                 @csrf
                 @method('PUT')
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">Password (min 8)</label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="cth: rahasia" value="">
                 </div>
                 <div class="form-group">

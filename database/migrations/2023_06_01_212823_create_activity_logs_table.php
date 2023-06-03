@@ -14,7 +14,14 @@ return new class extends Migration
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->string("logs");
+            $table->unsignedBigInteger("account_fk");
             $table->timestamps();
+
+            $table->foreign("account_fk")
+                    ->references("id")
+                    ->on("accounts")
+                    ->onDelete('cascade')
+                    ->onUpdate('cascade');
         });
     }
 

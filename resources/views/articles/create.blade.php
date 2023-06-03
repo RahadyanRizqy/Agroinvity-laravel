@@ -75,7 +75,7 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" name="save-btn">Tambahkan</button>
-                <a class="btn btn-danger" href="{{ route('articles.index') }}"> Back</a>
+                <a class="btn btn-danger" href="{{ route('articles.index') }}">Kembali</a>
             </div>
         </form>
     </div>

@@ -38,6 +38,12 @@ return new class extends Migration
 
             VALUES 
             (NEW.name, NEW.price_per_qty, NEW.total_qty, NEW.sold_products, NEW.stock_products, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.id, NEW.account_fk);
+
+            INSERT INTO activity_logs
+            (logs, account_fk)
+
+            VALUES
+            (CONCAT('Telah mengubah data produk dengan id: ', NEW.id), NEW.account_fk);
         END IF;
         END;
         ");
@@ -46,41 +52,70 @@ return new class extends Migration
         CREATE TRIGGER product_insert_trigger AFTER INSERT ON products
         FOR EACH ROW
         BEGIN
-        INSERT INTO product_histories 
-        (name, price_per_qty, total_qty, sold_products, stock_products, stored_at, updated_at, product_fk, account_fk)
+            INSERT INTO product_histories 
+            (name, price_per_qty, total_qty, sold_products, stock_products, stored_at, updated_at, product_fk, account_fk)
 
-        VALUES 
-        (NEW.name, NEW.price_per_qty, NEW.total_qty, NEW.sold_products, NEW.stock_products, NEW.stored_at, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.id, NEW.account_fk);
+            VALUES 
+            (NEW.name, NEW.price_per_qty, NEW.total_qty, NEW.sold_products, NEW.stock_products, NEW.stored_at, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.id, NEW.account_fk);
+
+            INSERT INTO activity_logs
+            (logs, account_fk)
+
+            VALUES
+            (CONCAT('Telah menginputkan data produk baru dengan id: ', NEW.id), NEW.account_fk);
         END;
         ");
-
+     
+        // SELF
         DB::unprepared("
         CREATE TRIGGER expense_update_trigger AFTER UPDATE ON expenses
         FOR EACH ROW
         BEGIN
-        IF NEW.price_per_qty != OLD.price_per_qty OR
-            NEW.quantity != OLD.quantity OR
-            NEW.name != OLD.name THEN
+            IF NEW.price_per_qty != OLD.price_per_qty OR
+                NEW.quantity != OLD.quantity OR
+                NEW.name != OLD.name THEN
 
-            INSERT INTO expense_histories 
-            (name, price_per_qty, quantity, account_fk, updated_at, expense_type_fk, expense_fk)
+                INSERT INTO expense_histories 
+                (name, price_per_qty, quantity, account_fk, updated_at, expense_type_fk, expense_fk)
+                VALUES 
+                (NEW.name, NEW.price_per_qty, NEW.quantity, NEW.account_fk, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.expense_type_fk, NEW.id);
 
-            VALUES 
-            (NEW.name, NEW.price_per_qty, NEW.quantity, NEW.account_fk, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.expense_type_fk, NEW.id);
-        END IF;
-        END;
+                IF NEW.expense_type_fk = 1 THEN
+                    INSERT INTO activity_logs
+                    (logs, account_fk)
+                    VALUES
+                    (CONCAT('Telah mengubah data bahan baku dengan id: ', NEW.id), NEW.account_fk);
+                ELSEIF NEW.expense_type_fk = 2 THEN
+                    INSERT INTO activity_logs
+                    (logs, account_fk)
+                    VALUES
+                    (CONCAT('Telah mengubah data operasional dengan id: ', NEW.id), NEW.account_fk);
+                END IF;
+            END IF;
+        END
         ");
 
         DB::unprepared("
         CREATE TRIGGER expense_insert_trigger AFTER INSERT ON expenses
         FOR EACH ROW
         BEGIN
-        INSERT INTO expense_histories 
-        (name, price_per_qty, quantity, account_fk, stored_at, updated_at, expense_type_fk, expense_fk)
+            INSERT INTO expense_histories 
+            (name, price_per_qty, quantity, account_fk, stored_at, updated_at, expense_type_fk, expense_fk)
+            VALUES 
+            (NEW.name, NEW.price_per_qty, NEW.quantity, NEW.account_fk, NEW.stored_at, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.expense_type_fk, NEW.id);
 
-        VALUES 
-        (NEW.name, NEW.price_per_qty, NEW.quantity, NEW.account_fk, NEW.stored_at, DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'), NEW.expense_type_fk, NEW.id);
-        END;
+            IF NEW.expense_type_fk = 1 THEN
+                INSERT INTO activity_logs
+                (logs, account_fk)
+                VALUES
+                (CONCAT('Telah menginputkan data bahan baku baru dengan id: ', NEW.id), NEW.account_fk);
+            ELSEIF NEW.expense_type_fk = 2 THEN
+                INSERT INTO activity_logs
+                (logs, account_fk)
+                VALUES
+                (CONCAT('Telah menginputkan data operasional baru dengan id: ', NEW.id), NEW.account_fk);
+            END IF;
+        END
         ");
     }
     

@@ -138,7 +138,7 @@ if (count($dates) == 1) {
 
                     <div class="container mt-5">
                         <div class="head d-flex justify-content-center">
-                            <h3 class="text-center">Prosentase Pendataan</h3>
+                            <h3 class="text-center">Persentase Pendataan</h3>
                         </div>
                         <div class="circle-chart d-flex justify-content-center align-items-center">
                             <div id="cirlce-chart"></div>

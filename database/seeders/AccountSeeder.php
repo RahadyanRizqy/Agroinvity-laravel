@@ -65,8 +65,8 @@ class AccountSeeder extends Seeder
     
             ],
             'account_type_fk' => [
-                2,
                 1,
+                2,
                 2,
                 3,
                 3,

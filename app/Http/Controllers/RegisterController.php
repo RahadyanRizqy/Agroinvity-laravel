@@ -35,7 +35,7 @@ class RegisterController extends Controller
                 'fullname' => 'required|max:255',
                 'email' => 'required|email:dns|min:2|max:255|unique:accounts',
                 'phone_number' => 'required|numeric|digits_between:10,20',
-                'password' => 'required|min:2|max:255',
+                'password' => 'required|min:8|max:255',
             ]);
     
             $input['password'] = Hash::make($input['password']);

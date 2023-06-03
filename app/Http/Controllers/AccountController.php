@@ -54,7 +54,7 @@ class AccountController extends Controller
                 'fullname' => 'required|max:255',
                 'email' => 'required|email:dns|min:2|max:255',
                 'phone_number' => 'required|numeric|digits_between:10,20',
-                'password' => 'required|min:2|max:255',
+                'password' => 'required|min:8|max:255',
             ]);
 
             $input = $request->all();
@@ -117,7 +117,7 @@ class AccountController extends Controller
                 'fullname' => 'required|max:255',
                 'email' => 'required|email:dns|min:2|max:255|',
                 'phone_number' => 'required|numeric|digits_between:10,20',
-                'password' => 'required|min:2|max:255',
+                'password' => 'required|min:8|max:255',
             ]);
       
             $input = $request->all();
@@ -220,8 +220,8 @@ class AccountController extends Controller
         try {
             
             $input = $request->validate([
-                'password' => 'required|min:2|max:255',
-                'confirm_password' => 'required|min:2|max:255',
+                'password' => 'required|min:8|max:255',
+                'confirm_password' => 'required|min:8|max:255',
             ]);
     
             if ($input['password'] != $input['confirm_password']) {
@@ -231,7 +231,7 @@ class AccountController extends Controller
                   
                 Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
         
-                return redirect()->route('login.index')->with('success','Password sudah diubah');
+                return redirect()->route('login.index')->with('success','Password berhasil diubah');
             }
     
         

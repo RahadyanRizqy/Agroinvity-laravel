@@ -19,7 +19,7 @@
         </tr>
         @endforeach
     </table>
-    <a href="{{ route('section.expenses', $section_back)}}" class="btn btn-primary">Kembali</a>
+    <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
     @elseif ($table_type == 2)
     <table class="table table-bordered">
         <tr>
@@ -43,6 +43,6 @@
         </tr>
         @endforeach
     </table>
-    <a href="{{ route('section.production')}}" class="btn btn-primary">Kembali</a>
+    <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
     @endif
 </main>
