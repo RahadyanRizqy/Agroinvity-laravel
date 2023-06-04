@@ -1,4 +1,4 @@
-@extends('master')
+@extends('forms/form_layout')
 
 @if($account->account_type_fk == 3)
     @section('title', 'Ubah Akun Pegawai')
@@ -43,6 +43,31 @@
         margin-bottom: 10px;
     }
 
+    *{
+        padding: 0;
+        margin: 0;
+    }
+
+    body{
+        font-family: Poppins;
+        background-image: url('/assets/img/background.png');
+        background-size: cover;
+    }
+
+    .formcontainer{
+        
+        position: absolute;
+        top: 18vh;
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 50px #000;
+        color:#1E1E1E;
+        font-size:14px;
+        font-weight:bold;
+        width:30%;
+        background: #004b2db8;
+
+    }
     .sweetalert {
         z-index: 100;
     }
@@ -66,10 +91,10 @@
 </div>
 
 @section('content')
-<div class="content">
-    <div class="form-container">
-        <div class="edit-form col-4">
-            <form id="account-crud-form" action="{{ route('accounts.update', $account->id )}}" method="POST" enctype="multipart/form-data">
+<section class="container-fluid">
+    <section class="row justify-content-center">
+        <section class="col-12 col-sm-4 col-md-4">
+            <form class="formcontainer" id="account-crud-form" action="{{ route('accounts.update', $account->id )}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -91,7 +116,7 @@
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
                 <a class="btn btn-danger" href="{{ url()->previous() }}">Batal</a>
             </form>
-        </div>
-    </div>
-</div>
+        </section>
+    </section>
+</section>
 @endsection

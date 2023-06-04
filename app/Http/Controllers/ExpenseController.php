@@ -80,7 +80,7 @@ class ExpenseController extends Controller
             $input['stored_at'] = Carbon::now()->format('Y-m-d H:i:s');
             
             $expenses = Expenses::where('name', $input['name'])
-                                ->where('account_fk', Auth::id())
+                                ->where('account_fk', $input['account_fk'])
                                 ->exists();
             if ($expenses) {
                 return redirect()->back()->withErrors(['message' => 'Data sudah ada!']);
@@ -184,6 +184,7 @@ class ExpenseController extends Controller
     public function destroy(Expenses $expense)
     {
         $expense->delete();
+        $this->LoggerDelete($expense->id, $expense->expense_type_fk);
         return redirect()->route('section.expenses', ['type_id' => $expense->expense_type_fk])
             ->with('success','Data berhasil dihapus');
     }
@@ -217,6 +218,24 @@ class ExpenseController extends Controller
             ]);
         } else if ($type_id == 2){
             ActivityLogs::where('logs', "Telah mengubah data operasional dengan id: $id")
+            ->orderBy('id', 'DESC')->limit(1)
+            ->update([
+                'by_child' => true,
+            ]);
+        }
+    }
+
+    // FOR WORKER ONLY
+    public function LoggerDelete($id, $type_id)
+    {
+        if ($type_id == 1) {
+            ActivityLogs::where('logs', "Telah menghapus data bahan baku dengan id: $id")
+            ->orderBy('id', 'DESC')->limit(1)
+            ->update([
+                'by_child' => true,
+            ]);
+        } else if ($type_id == 2){
+            ActivityLogs::where('logs', "Telah menghapus data operasional dengan id: $id")
             ->orderBy('id', 'DESC')->limit(1)
             ->update([
                 'by_child' => true,

@@ -1,4 +1,4 @@
-@extends('master')
+@extends('forms/form_layout')
 
 @section('title', 'Menambah Data Produk')
 
@@ -39,6 +39,31 @@
         margin-bottom: 10px;
     }
 
+    *{
+        padding: 0;
+        margin: 0;
+    }
+
+    body{
+        font-family: Poppins;
+        background-image: url('/assets/img/background.png');
+        background-size: cover;
+    }
+
+    .formcontainer{
+        
+        position: absolute;
+        top: 18vh;
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 50px #000;
+        color:#1E1E1E;
+        font-size:14px;
+        font-weight:bold;
+        width:30%;
+        background: #004b2db8;
+
+    }
     .sweetalert {
         z-index: 100;
     }
@@ -71,7 +96,34 @@
 </div>
 
 @section('content')
-<div class="content">
+<section class="container-fluid">
+    <section class="row justify-content-center">
+        <section class="col-12 col-sm-4 col-md-4">
+            <form class="formcontainer" action="{{ route('products.store')}}" method="post">
+                @csrf
+                <div class="form-group">
+                    <label for="name" class="form-label">Nama Produk: </label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Daun Teh 1kg" required>
+                </div>
+                <div class="form-group">
+                    <label for="total_qty" class="form-label">Jumlah: </label>
+                    <input type="number" class="form-control" name="total_qty" placeholder="cth: 2" required>
+                </div>
+                <div class="form-group">
+                    <label for="sold_products" class="form-label">Produk Terjual: </label>
+                    <input type="number" class="form-control" name="sold_products" placeholder="cth: 20" required>
+                </div>
+                <div class="form-group">
+                    <label for="price_per_qty" class="form-label">Harga: </label>
+                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 50000" required>
+                </div>
+                <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
+                <a class="btn btn-danger" href="{{ route('section.production') }}">Batal</a>
+            </form>
+        </section>
+    </section>
+</section>
+{{-- <div class="content">
     <div class="form-container">
         <div class="edit-form col-4">
             <form action="{{ route('products.store')}}" method="post">
@@ -97,5 +149,5 @@
             </form>
         </div>
     </div>
-</div>
+</div> --}}
 @endsection

@@ -33,6 +33,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        
         try {
         //     // $request->validate([
         //     //     'name' => 'required',
@@ -65,7 +66,9 @@ class ProductController extends Controller
             }
             $input['stored_at'] = Carbon::now()->format('Y-m-d H:i:s');
             
-            $products = Products::where('name', $input['name'])->exists();
+            $products = Products::where('name', $input['name'])
+                                ->where('account_fk', $input['account_fk'])
+                                ->exists();
             if ($products) {
                 return redirect()->back()->withErrors(['message' => 'Data sudah ada!']);
             }
@@ -135,6 +138,7 @@ class ProductController extends Controller
     public function destroy(Products $product)
     {
         $product->delete();
+        $this->LoggerDelete($product->id);
         return redirect()->route('section.production')
             ->with('success','Data berhasil dihapus');
     }
@@ -153,6 +157,16 @@ class ProductController extends Controller
     public function LoggerUpdate($id)
     {
         ActivityLogs::where('logs', "Telah mengubah data produk dengan id: $id")
+        ->orderBy('id', 'DESC')->limit(1)
+        ->update([
+            'by_child' => true,
+        ]);
+    }
+
+        // FOR WORKER ONLY
+    public function LoggerDelete($id)
+    {
+        ActivityLogs::where('logs', "Telah menghapus data produk dengan id: $id")
         ->orderBy('id', 'DESC')->limit(1)
         ->update([
             'by_child' => true,

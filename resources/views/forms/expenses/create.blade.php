@@ -44,29 +44,30 @@
     }
 
     *{
-            padding: 0;
-            margin: 0;
-        }
+        padding: 0;
+        margin: 0;
+    }
 
-        body{
-            background-image: url('/assets/img/background.png');
-            background-size: cover;
-        }
+    body{
+        font-family: Poppins;
+        background-image: url('/assets/img/background.png');
+        background-size: cover;
+    }
 
-        .formcontainer{
-            
-            position: absolute;
-            top: 18vh;
-            padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0px 5px 50px #000;
-            color:#1E1E1E;
-            font-size:14px;
-            font-weight:bold;
-            width:30%;
-            background: #004b2db8;
+    .formcontainer{
+        
+        position: absolute;
+        top: 18vh;
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 50px #000;
+        color:#1E1E1E;
+        font-size:14px;
+        font-weight:bold;
+        width:30%;
+        background: #004b2db8;
 
-        }
+    }
 
 
     .sweetalert {
@@ -100,20 +101,22 @@
                 <div class="mb-3">
                 @if($type_id == 1)
                     <label for="name" class="form-label">Nama Bahan Baku</label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" id="inputNama" value="{{ old('name') }}">
                 @elseif($type_id == 2)
                     <label for="name" class="form-label">Nama Operasional</label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Kompor Wow" id="inputNama" value="{{ old('name') }}">
                 @else
                     <label for="name" class="form-label">Ini Ngebug</label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" id="inputNama" value="{{ old('name') }}">
                 @endif
-                  <input type="text" class="form-control" name="name" id="inputNama" aria-describedby="emailHelp" value="{{ old('name') }}">
                 </div>
                 <div class="mb-3">
                   <label for="inputJumlah" class="form-label">Jumlah</label>
-                  <input type="number" class="form-control" name="quantity" id="inputJumlah" value="{{ old('quantity') }}">
+                  <input type="number" class="form-control" name="quantity" placeholder="cth: 2" id="inputJumlah" value="{{ old('quantity') }}">
                 </div>
                 <div class="mb-3">
                   <label for="inputHarga" class="form-label">Harga</label>
-                  <input type="number" class="form-control" name="price_per_qty" id="inputHarga" value="{{ old('price_per_qty') }}">
+                  <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" id="inputHarga" value="{{ old('price_per_qty') }}">
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
                 <a class="btn btn-danger" href="{{ route('section.expenses', $type_id) }}">Batal</a>

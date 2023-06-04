@@ -65,6 +65,18 @@ return new class extends Migration
             (CONCAT('Telah menginputkan data produk baru dengan id: ', NEW.id), NEW.account_fk);
         END;
         ");
+
+        DB::unprepared("
+        CREATE TRIGGER product_delete_trigger AFTER DELETE ON products
+        FOR EACH ROW
+        BEGIN
+            INSERT INTO activity_logs
+            (logs, account_fk)
+
+            VALUES
+            (CONCAT('Telah menghapus data produk dengan id: ', OLD.id), OLD.account_fk);
+        END;
+        ");
      
         // SELF
         DB::unprepared("
@@ -114,6 +126,24 @@ return new class extends Migration
                 (logs, account_fk)
                 VALUES
                 (CONCAT('Telah menginputkan data operasional baru dengan id: ', NEW.id), NEW.account_fk);
+            END IF;
+        END
+        ");
+
+        DB::unprepared("
+        CREATE TRIGGER expense_delete_trigger AFTER DELETE ON expenses
+        FOR EACH ROW
+        BEGIN
+            IF OLD.expense_type_fk = 1 THEN
+                INSERT INTO activity_logs
+                (logs, account_fk)
+                VALUES
+                (CONCAT('Telah menghapus data bahan baku dengan id: ', OLD.id), OLD.account_fk);
+            ELSEIF OLD.expense_type_fk = 2 THEN
+                INSERT INTO activity_logs
+                (logs, account_fk)
+                VALUES
+                (CONCAT('Telah menghapus data operasional dengan id: ', OLD.id), OLD.account_fk);
             END IF;
         END
         ");

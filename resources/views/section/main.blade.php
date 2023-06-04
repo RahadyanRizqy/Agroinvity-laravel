@@ -101,13 +101,16 @@ if (isset($dates)) {
             @foreach ($logs as $log)
             <div class="sl-item sl-primary">
               <div class="sl-content">
-                @if (Str::contains($log->logs, 'bahan baku'))
+                @if (Str::contains($log->logs, 'hapus'))
+                <small class="text-muted">Produk</small>
+                <p>{{ $log->logs }}</p>
+                @elseif (Str::contains($log->logs, 'bahan baku'))
                 <small class="text-muted">Bahan Baku</small>
                 <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
                 @elseif (Str::contains($log->logs, 'operasional'))
                 <small class="text-muted">Operasional</small>
                 <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
-                @else
+                @elseif (Str::contains($log->logs, 'produk'))
                 <small class="text-muted">Produk</small>
                 <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('product.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
                 @endif

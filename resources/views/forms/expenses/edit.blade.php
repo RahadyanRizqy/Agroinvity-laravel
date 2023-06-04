@@ -49,6 +49,7 @@
         }
 
         body{
+            font-family: Poppins;
             background-image: url('/assets/img/background.png');
             background-size: cover;
         }
@@ -101,20 +102,22 @@
                 <div class="mb-3">
                     @if($expense->expense_type_fk == 1)
                         <label for="name" class="form-label">Nama Bahan Baku</label>
+                        <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" id="inputNama" aria-describedby="emailHelp" value="{{ $expense->name }}">
                     @elseif($expense->expense_type_fk == 2)
                         <label for="name" class="form-label">Nama Operasional</label>
+                        <input type="text" class="form-control" name="name" placeholder="cth: Kompor Wow" id="inputNama" aria-describedby="emailHelp" value="{{ $expense->name }}">
                     @else
                         <label for="name" class="form-label">Ini Ngebug</label>
+                        <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" id="inputNama" aria-describedby="emailHelp" value="{{ $expense->name }}">
                     @endif
-                  <input type="text" class="form-control" name="name" id="inputNama" aria-describedby="emailHelp" value="{{ $expense->name }}">
                 </div>
                 <div class="mb-3">
                   <label for="inputJumlah" class="form-label">Jumlah</label>
-                  <input type="number" class="form-control" name="quantity" id="inputJumlah" value="{{ $expense->quantity }}">
+                  <input type="number" class="form-control" name="quantity" placeholder="cth: 2" id="inputJumlah" value="{{ $expense->quantity }}">
                 </div>
                 <div class="mb-3">
                   <label for="inputHarga" class="form-label">Harga</label>
-                  <input type="number" class="form-control" name="price_per_qty" id="inputHarga" value="{{ $expense->price_per_qty }}">
+                  <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" id="inputHarga" value="{{ $expense->price_per_qty }}">
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
                 <a class="btn btn-danger" href="{{ route('section.expenses', $expense->expense_type_fk) }}">Batal</a>
