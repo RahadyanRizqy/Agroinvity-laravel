@@ -25,9 +25,6 @@
             <a class="nav-link" href="#service">LAYANAN</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="/feature">FITUR</a>
-          </li>
-          <li class="nav-item mx-2">
             <a class="nav-link" href="https://wa.me/6288804897436">KONTAK</a>
           </li>
         </ul>

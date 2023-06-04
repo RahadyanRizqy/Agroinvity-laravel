@@ -183,6 +183,7 @@ class AccountController extends Controller
                 Tokens::create([
                     'token' => $tokenGen, 
                     'account_fk' => Accounts::where('email', $input['email'])->first()->id, 
+                    'requested_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
                 $data = [
                     'subject' => 'Agroinvity',
@@ -206,19 +207,44 @@ class AccountController extends Controller
     {
         $tokenExists = Tokens::where('token', $token)->exists();
         if ($tokenExists) {
-            Tokens::where('token', $token)->first()->expired_at;
-            Tokens::where('token', $token)->first()->requested_at;
-            if (Carbon::parse(Carbon::now()->format('Y-m-d H:i:s')))
-            $tokenAcc = Tokens::with('tokenOf')->where('token', $token)->first()->tokenOf;
-            return view('forms.password_reset', ['account' => $tokenAcc, 'expiredstatus' => 0]);
+            if (Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))
+                ->between
+                    (
+                        Tokens::where('token', $token)->first()->requested_at, 
+                        Tokens::where('token', $token)->first()->expired_at
+                    )
+                ) 
+            {
+                $tokenAcc = Tokens::with('tokenOf')->where('token', $token)->first()->tokenOf;
+                return view('forms.password_reset', ['account' => $tokenAcc, 'expiredstatus' => 0]);
+            }
+            else
+            {
+                return view('forms.password_reset', ['account' => false, 'expiredstatus' => 1]);
+            }
         }
-        return view('forms.password_reset', ['account' => false, 'expiredstatus' => 1]);
+        return view('forms.password_reset', ['account' => false, 'expiredstatus' => 2]);
     }
 
     public function doResetPassword(Request $request, $id) 
     {
         try {
-            
+            $token = Tokens::where('account_fk', $id)->orderBy('id', 'DESC')->first()->token;
+            if (Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))
+                ->between
+                    (
+                        Tokens::where('token', $token)->first()->requested_at, 
+                        Tokens::where('token', $token)->first()->expired_at
+                    )
+                ) 
+            {
+                $tokenAcc = Tokens::with('tokenOf')->where('token', $token)->first()->tokenOf;
+                return view('forms.password_reset', ['account' => $tokenAcc, 'expiredstatus' => 0]);
+            }
+            else
+            {
+                return view('forms.password_reset', ['account' => false, 'expiredstatus' => 1]);
+            }
             $input = $request->validate([
                 'password' => 'required|min:8|max:255',
                 'confirm_password' => 'required|min:8|max:255',
@@ -230,7 +256,7 @@ class AccountController extends Controller
                 $input['password'] = Hash::make($input['password']);
                   
                 Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
-        
+                Tokens::where('account_fk', $id)->update(['status' => false]);
                 return redirect()->route('login.index')->with('success','Password berhasil diubah');
             }
     

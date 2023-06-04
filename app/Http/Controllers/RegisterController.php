@@ -6,6 +6,7 @@ use App\Models\Accounts;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class RegisterController extends Controller
 {
@@ -33,8 +34,8 @@ class RegisterController extends Controller
         try {
             $input = $request->validate([
                 'fullname' => 'required|max:255',
-                'email' => 'required|email:dns|min:2|max:255|unique:accounts',
-                'phone_number' => 'required|numeric|digits_between:10,20',
+                'email' => 'required|email:dns|min:2|max:255',
+                'phone_number' => 'required|numeric|digits_between:8,20',
                 'password' => 'required|min:8|max:255',
             ]);
     
@@ -43,13 +44,15 @@ class RegisterController extends Controller
         
             $accounts = Accounts::where('email', $input['email'])->exists();
             if ($accounts) {
-                return redirect()->back()->withErrors(['error' => 'Data sudah ada!']);
+                return redirect()->back()->withErrors(['error' => 'Akun sudah ada, silahkan login!']);
             }
             Accounts::create($input);
             return redirect()->route('login.index');
             // return redirect()->route('dashboard', ['type_id' => $type_id]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Form harus diisi dengan benar'])->withInput();
+        } catch (ValidationException $e) {
+            return redirect()->back()->with('passwordError', 'Panjang password harus 8 hingga 255!');
         }
     }
 

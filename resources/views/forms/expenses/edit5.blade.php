@@ -1,6 +1,10 @@
 @extends('master')
 
-@section('title', 'Profil Akun')
+@if ($expense->expense_type_fk == 1)
+    @section('title', 'Mengubah Data Bahan Baku')
+@elseif ($expense->expense_type_fk == 2)
+    @section('title', 'Mengubah Data Operasional')
+@endif
 
 @push('style')
 <style>
@@ -65,26 +69,29 @@
 <div class="content">
     <div class="form-container">
         <div class="edit-form col-4">
-            <form id="account-crud-form" action="{{ route('accounts.store')}}" method="post">
+            <form id="registration-form" action="{{ route('expenses.update', $expense->id)}}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <div class="form-group">
-                    <label for="fullname" class="form-label">Nama Akun</label>
-                    <input type="text" class="form-control" name="fullname" placeholder="cth: Arcueid Brunestud" value="{{ old('fullname') }}">
+                    @if($expense->expense_type_fk == 1)
+                        <label for="name" class="form-label">Nama Bahan Baku</label>
+                    @elseif($expense->expense_type_fk == 2)
+                        <label for="name" class="form-label">Nama Operasional</label>
+                    @else
+                        <label for="name" class="form-label">Ini Ngebug</label>
+                    @endif
+                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" value="{{ $expense->name }}">
                 </div>
                 <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" name="email" placeholder="cth: arcueidbrunestud@gmail.com" value="{{old('email')}}">
+                    <label for="quantity" class="form-label">Jumlah: </label>
+                    <input type="number" class="form-control" name="quantity" placeholder="cth: 2" value="{{ $expense->quantity }}">
                 </div>
                 <div class="form-group">
-                    <label for="phone_number" class="form-label">Nomor HP</label>
-                    <input type="number" class="form-control" name="phone_number" placeholder="cth: 6281225120012" name="priceInput" value="{{ old('phone_number')}}">
+                    <label for="price_per_qty" class="form-label">Harga: </label>
+                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" value="{{ $expense->price_per_qty }}">
                 </div>
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
-                </div>
-                <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
-                <a class="btn btn-danger" href="{{ url()->previous() }}">Batal</a>
+                <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
+                <a class="btn btn-danger" href="{{ route('section.expenses', $expense->expense_type_fk) }}">Batal</a>
             </form>
         </div>
     </div>

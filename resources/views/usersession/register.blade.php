@@ -26,16 +26,35 @@
                         <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="cth: arcueidbrune@stud.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="cth: arc2512" required>
+                        <label for="password" class="form-label">Password (min 8) </label>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="cth: arc2512" required>
                     </div>
+                        <input type="checkbox" id="showPasswordCheckbox"><span style="color: white"> Tampilkan/Sembunyikan password</span><br>
+                            <script>
+                                $(document).ready(function() {
+                                    $('#showPasswordCheckbox').change(function() {
+                                        var passwordField = $('#password');
+                                        var isChecked = $(this).is(':checked');
+                                        
+                                        if (isChecked) {
+                                            passwordField.attr('type', 'text');
+                                        } else {
+                                            passwordField.attr('type', 'password');
+                                        }
+                                        });
+                                    });
+                            </script>
                         <button type="submit" class="btn form-button btn-success">Daftar</button>
                     <div>
                         <span class="ask">Sudah punya akun? <a href="login">Masuk</a> sekarang juga!</span>
                     </div>
-                    @if ($errors->any())
+                    @if (Str::contains($errors->first(), 'Form'))
                     <div class="mt-2">
-                        <span class="warning" style="color: white;">Akun sudah ada, Silahkan login!</span>
+                        <span class="warning" style="color: white;">{{ $errors->first() }}</span>
+                    </div>
+                    @elseif (Str::contains($errors->first(), 'Akun'))
+                    <div class="mt-2">
+                        <span class="warning" style="color: white;">{{ $errors->first() }}</span>
                     </div>
                     <div class="mt-1 col-md-12">
                         <span class="warning" style="color: white;">Bila lupa password silahkan <a href="{{ route('request.token')}}" style="color: white" target="_blank"> reset password</a></span>

@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'Profil Akun')
+@section('title', 'Menambah Data Produk')
 
 @push('style')
 <style>
@@ -46,7 +46,6 @@
 @endpush
 
 <div class="sweetalert">
-    {{ $message = ""}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if ($errors->any())
     <script>
@@ -58,6 +57,16 @@
             footer: '<a href=""></a>'
         })
     </script>
+    {{-- @elseif (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+                position: 'top-center',
+                footer: '<a href=""></a>'
+            })
+        </script> --}}
     @endif
 </div>
 
@@ -65,26 +74,26 @@
 <div class="content">
     <div class="form-container">
         <div class="edit-form col-4">
-            <form id="account-crud-form" action="{{ route('accounts.store')}}" method="post">
+            <form action="{{ route('products.store')}}" method="post">
                 @csrf
                 <div class="form-group">
-                    <label for="fullname" class="form-label">Nama Akun</label>
-                    <input type="text" class="form-control" name="fullname" placeholder="cth: Arcueid Brunestud" value="{{ old('fullname') }}">
+                    <label for="name" class="form-label">Nama Produk: </label>
+                    <input type="text" class="form-control" name="name" placeholder="cth: Daun Teh 1kg" required>
                 </div>
                 <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" name="email" placeholder="cth: arcueidbrunestud@gmail.com" value="{{old('email')}}">
+                    <label for="total_qty" class="form-label">Jumlah: </label>
+                    <input type="number" class="form-control" name="total_qty" placeholder="cth: 2" required>
                 </div>
                 <div class="form-group">
-                    <label for="phone_number" class="form-label">Nomor HP</label>
-                    <input type="number" class="form-control" name="phone_number" placeholder="cth: 6281225120012" name="priceInput" value="{{ old('phone_number')}}">
+                    <label for="sold_products" class="form-label">Produk Terjual: </label>
+                    <input type="number" class="form-control" name="sold_products" placeholder="cth: 20" required>
                 </div>
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
+                    <label for="price_per_qty" class="form-label">Harga: </label>
+                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 50000" required>
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
-                <a class="btn btn-danger" href="{{ url()->previous() }}">Batal</a>
+                <a class="btn btn-danger" href="{{ route('section.production') }}">Batal</a>
             </form>
         </div>
     </div>

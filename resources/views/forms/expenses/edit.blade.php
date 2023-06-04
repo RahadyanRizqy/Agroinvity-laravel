@@ -1,4 +1,4 @@
-@extends('master')
+@extends('forms/form_layout')
 
 @if ($expense->expense_type_fk == 1)
     @section('title', 'Mengubah Data Bahan Baku')
@@ -43,6 +43,32 @@
         margin-bottom: 10px;
     }
 
+    *{
+            padding: 0;
+            margin: 0;
+        }
+
+        body{
+            background-image: url('/assets/img/background.png');
+            background-size: cover;
+        }
+
+        .formcontainer{
+            
+            position: absolute;
+            top: 18vh;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 50px #000;
+            color:#1E1E1E;
+            font-size:14px;
+            font-weight:bold;
+            width:30%;
+            background: #004b2db8;
+
+        }
+
+
     .sweetalert {
         z-index: 100;
     }
@@ -66,13 +92,13 @@
 </div>
 
 @section('content')
-<div class="content">
-    <div class="form-container">
-        <div class="edit-form col-4">
-            <form id="registration-form" action="{{ route('expenses.update', $expense->id)}}" method="POST" enctype="multipart/form-data">
+<section class="container-fluid">
+    <section class="row justify-content-center">
+        <section class="col-12 col-sm-4 col-md-4">
+            <form class="formcontainer" action="{{ route('expenses.update', $expense->id)}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <div class="form-group">
+                <div class="mb-3">
                     @if($expense->expense_type_fk == 1)
                         <label for="name" class="form-label">Nama Bahan Baku</label>
                     @elseif($expense->expense_type_fk == 2)
@@ -80,20 +106,50 @@
                     @else
                         <label for="name" class="form-label">Ini Ngebug</label>
                     @endif
-                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" value="{{ $expense->name }}">
+                  <input type="text" class="form-control" name="name" id="inputNama" aria-describedby="emailHelp" value="{{ $expense->name }}">
                 </div>
-                <div class="form-group">
-                    <label for="quantity" class="form-label">Jumlah: </label>
-                    <input type="number" class="form-control" name="quantity" placeholder="cth: 2" value="{{ $expense->quantity }}">
+                <div class="mb-3">
+                  <label for="inputJumlah" class="form-label">Jumlah</label>
+                  <input type="number" class="form-control" name="quantity" id="inputJumlah" value="{{ $expense->quantity }}">
                 </div>
-                <div class="form-group">
-                    <label for="price_per_qty" class="form-label">Harga: </label>
-                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" value="{{ $expense->price_per_qty }}">
+                <div class="mb-3">
+                  <label for="inputHarga" class="form-label">Harga</label>
+                  <input type="number" class="form-control" name="price_per_qty" id="inputHarga" value="{{ $expense->price_per_qty }}">
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
                 <a class="btn btn-danger" href="{{ route('section.expenses', $expense->expense_type_fk) }}">Batal</a>
+              </form>
+        </section>
+    </section>
+</section>
+
+{{-- <div class="content">
+    <div class="form-container">
+        <div class="edit-form col-4">
+            <form id="registration-form" action="{{ route('expenses.store', ['type_id' => $type_id])}}" method="post">
+                @csrf
+                <div class="form-group">
+                    @if($type_id == 1)
+                        <label for="name" class="form-label">Nama Bahan Baku</label>
+                    @elseif($type_id == 2)
+                        <label for="name" class="form-label">Nama Operasional</label>
+                    @else
+                        <label for="name" class="form-label">Ini Ngebug</label>
+                    @endif
+                    <input type="text" class="form-control" name="name" placeholder="cth: Pestisida X" value="{{ old('name') }}">
+                </div>
+                <div class="form-group">
+                    <label for="quantity" class="form-label">Jumlah: </label>
+                    <input type="number" class="form-control" name="quantity" placeholder="cth: 2" value="{{ old('quantity') }}">
+                </div>
+                <div class="form-group">
+                    <label for="price_per_qty" class="form-label">Harga: </label>
+                    <input type="number" class="form-control" name="price_per_qty" placeholder="cth: 55000" value="{{ old('price_per_qty') }}">
+                </div>
+                <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
+                <a class="btn btn-danger" href="{{ route('section.expenses', $type_id) }}">Batal</a>
             </form>
         </div>
     </div>
-</div>
+</div> --}}
 @endsection

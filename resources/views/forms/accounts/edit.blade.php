@@ -89,7 +89,7 @@
                     <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
                 </div>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
-                <a class="btn btn-danger" href="{{ route('section.account')}}">Batal</a>
+                <a class="btn btn-danger" href="{{ url()->previous() }}">Batal</a>
             </form>
         </div>
     </div>
