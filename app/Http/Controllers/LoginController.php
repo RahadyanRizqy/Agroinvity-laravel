@@ -34,45 +34,49 @@ class LoginController extends Controller
             'email' => 'required|email:dns|min:2|max:255',
             'password' => 'required|min:8|max:255',
         ]);
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            
-            // dd($request);
-            // dd(Accounts::where('id', Auth::id())->get());
-            // return redirect()->intended('dashboard')
-            // ->with([
-            //     'accountId' => Auth::id(),
-            //   ]);
         
-            if (Auth::user()->account_type_fk == 1) {
-                return redirect()->intended('dashboard');
-            } else if (Auth::user()->account_type_fk == 2) {
-                if (Carbon::now()->diffInDays(Auth::user()->registered_at) > 30) {
-                    return back()->with('loginError', 'Akun nonaktif silahkan kontak admin untuk aktivasi.');
-                }
-                return redirect()->intended('dashboard');      
+        try {
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
                 
-            } else {
-                if (Carbon::now()->diffInDays(Accounts::with('parentAcc')->find(Auth::id())->parentAcc->registered_at) > 30) {
-                    return back()->with('loginError', 'Akun mitra nonaktif, pegawai tidak bisa masuk.');
+                // dd($request);
+                // dd(Accounts::where('id', Auth::id())->get());
+                // return redirect()->intended('dashboard')
+                // ->with([
+                //     'accountId' => Auth::id(),
+                //   ]);
+            
+                if (Auth::user()->account_type_fk == 1) {
+                    return redirect()->intended('dashboard');
+                } else if (Auth::user()->account_type_fk == 2) {
+                    if (Carbon::now()->diffInDays(Auth::user()->registered_at) > 30) {
+                        return back()->with('loginError', 'Akun nonaktif silahkan kontak admin untuk aktivasi.');
+                    }
+                    return redirect()->intended('dashboard');      
+                    
+                } else {
+                    if (Carbon::now()->diffInDays(Accounts::with('parentAcc')->find(Auth::id())->parentAcc->registered_at) > 30) {
+                        return back()->with('loginError', 'Akun mitra nonaktif, pegawai tidak bisa masuk.');
+                    }
+                    // if (Accounts::with('parentAcc')->find(Auth::id())->parentAcc->remaining_days < 0) {
+                    //     return back()->with('loginError', 'Akun mitra nonaktif, pegawai tidak bisa masuk.');
+                    // }
+                    return redirect()->intended('dashboard');       
                 }
-                // if (Accounts::with('parentAcc')->find(Auth::id())->parentAcc->remaining_days < 0) {
-                //     return back()->with('loginError', 'Akun mitra nonaktif, pegawai tidak bisa masuk.');
-                // }
-                return redirect()->intended('dashboard');       
             }
-        }
-
-        else {
-            if (Accounts::where('email', $credentials['email'])->first()->account_type_fk == 1) {
-                return back()->with('adminError', 'Bila admin salah/lupa password silahkan reset di database');
-            } else if (Accounts::where('email', $credentials['email'])->first()->account_type_fk == 3) {
-                return back()->with('workerError', 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait');
+    
+            else {
+                if (Accounts::where('email', $credentials['email'])->first()->account_type_fk == 1) {
+                    return back()->with('adminError', 'Bila admin salah/lupa password silahkan reset di database');
+                } else if (Accounts::where('email', $credentials['email'])->first()->account_type_fk == 3) {
+                    return back()->with('workerError', 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait');
+                }
             }
+            return back()->with('loginError', 'Akun tidak ada/salah password.');
+        } 
+        catch (\Exception $e) {
+            return back()->with('loginError', 'Akun tidak ada/salah password.');
         }
-        return back()->with('loginError', 'Akun tidak ada/salah password.');
-
     }
 
     /**

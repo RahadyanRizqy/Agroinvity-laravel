@@ -25,102 +25,105 @@ class DashboardController extends Controller
 {
     public function showDashboard() # SHOW
     {
-        $currentMonth = Carbon::now()->format('Y-m');
-        $toId = Auth::id();
-        if (Auth::user()->account_type_fk == 3) {
-            $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
-        }
-        $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
-        $pros2 = Products::select(DB::raw('SUM(sold_products) as total'))->where('account_fk', $toId)->get()->first()->total;
-        
-        $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
-        $loss2 = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
-        
-        $totalProsLoss = $pros + $loss;
-        $prosPercent = number_format(($pros/$totalProsLoss) * 100, 2) ?? 0;
-        $lossPercent = number_format(($loss/$totalProsLoss) * 100, 2) ?? 0;
-        
-        // if (Auth::user()->account_type_fk == 2) {
-
-        // }
-        $logs = ActivityLogs::where('account_fk', $toId)->orderBy('id', 'DESC')->limit(5)->get();
-        if (Auth::user()->account_type_fk == 3) {
-            $logs = ActivityLogs::where('account_fk', $toId)->where('by_child', true)->orderBy('id', 'DESC')->limit(6)->get();
-        }
-
-        $soldProd = Products::selectRaw('SUM(sold_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
-        $stockProd = Products::selectRaw('SUM(stock_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
-
-        $totalSoldStock = $soldProd + $stockProd;
-        $soldPercent = number_format(($soldProd/$totalSoldStock) * 100, 2) ?? 0;
-        $stockPercent = number_format(($stockProd/$totalSoldStock) * 100, 2) ?? 0;
-
-        $omzetTotal = Expenses::selectRaw('SUM(quantity*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
-        // $omzetPercent = number_format(($omzetTotal/$totalSoldStock) * 100, 2);
-        $omzetPercent = 100 - $soldPercent;
-
-
-        // GRAPHIC
-        $currentMonth = Carbon::now()->format('Y-m');
-        $percentExp1 = Expenses::where('expense_type_fk', 1)
-                        ->where('account_fk', Auth::id())
-                        ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
-                        ->count();
-        $percentExp2 = Expenses::where('expense_type_fk', 2)
-                        ->where('account_fk', Auth::id())
-                        ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
-                        ->count();
-        $productPerc = Products::where('account_fk', Auth::id())
-                        ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
-                        ->count();
-
-        $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                        ->where('account_fk', 2)
-                        ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
-                        ->groupBy('updated_at')
-                        ->get();
-
-        $lineDates = [];
-        $lineValues = [];
-
-        foreach ($lineResult as $dv) {
-            $lineDates[] = $dv['updated_at'];
-            $lineValues[] = $dv['CALC'];
-        }
-
-        function myGraph($num, $total)
-        {
+        if (Auth::user()->account_type_fk == 2 || Auth::user()->account_type_fk == 3) {
+            $currentMonth = Carbon::now()->format('Y-m');
+            $toId = Auth::id();
+            if (Auth::user()->account_type_fk == 3) {
+                $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+            }
+            $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
+            $pros2 = Products::select(DB::raw('SUM(sold_products) as total'))->where('account_fk', $toId)->get()->first()->total;
+            
+            $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
+            $loss2 = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
+            
+            $totalProsLoss = $pros + $loss;
             try {
-                return ($num / $total) * 100;
+                $prosPercent = number_format(($pros/$totalProsLoss) * 100, 2) ?? 0;
+                $lossPercent = number_format(($loss/$totalProsLoss) * 100, 2) ?? 0;
+            } catch (DivisionByZeroError $e) {
+                $prosPercent = 0;
+                $lossPercent = 0;
             }
-            catch (DivisionByZeroError $e) {
-                return 0;
+            
+            // if (Auth::user()->account_type_fk == 2) {
+    
+            // }
+            $logs = ActivityLogs::where('account_fk', $toId)->orderBy('id', 'DESC')->limit(5)->get();
+            if (Auth::user()->account_type_fk == 3) {
+                $logs = ActivityLogs::where('account_fk', $toId)->where('by_child', true)->orderBy('id', 'DESC')->limit(6)->get();
             }
+    
+            $soldProd = Products::selectRaw('SUM(sold_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
+            $stockProd = Products::selectRaw('SUM(stock_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
+    
+            $totalSoldStock = $soldProd + $stockProd;
+            try {
+                $soldPercent = number_format(($soldProd/$totalSoldStock) * 100, 2) ?? 0;
+                $stockPercent = number_format(($stockProd/$totalSoldStock) * 100, 2) ?? 0;
+            } catch (DivisionByZeroError $e) {
+                $soldPercent = 0;
+                $stockPercent = 0;
+            }
+    
+            $omzetTotal = Expenses::selectRaw('SUM(quantity*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
+            // $omzetPercent = number_format(($omzetTotal/$totalSoldStock) * 100, 2);
+
+            $omzetPercent = 100 - $soldPercent;
+            if ($soldPercent == 0) {
+                $omzetPercent = 0;
+            }
+    
+    
+            // GRAPHIC
+            $currentMonth = Carbon::now()->format('Y-m');
+            $percentExp1 = Expenses::where('expense_type_fk', 1)
+                            ->where('account_fk', Auth::id())
+                            ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                            ->count();
+            $percentExp2 = Expenses::where('expense_type_fk', 2)
+                            ->where('account_fk', Auth::id())
+                            ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                            ->count();
+            $productPerc = Products::where('account_fk', Auth::id())
+                            ->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")
+                            ->count();
+    
+            $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
+                            ->where('account_fk', Auth::id())
+                            ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
+                            ->groupBy('updated_at')
+                            ->get();
+    
+            $lineDates = [];
+            $lineValues = [];
+    
+            foreach ($lineResult as $dv) {
+                $lineDates[] = $dv['updated_at'];
+                $lineValues[] = $dv['CALC'];
+            }
+    
+            function myGraph($num, $total)
+            {
+                try {
+                    return ($num / $total) * 100;
+                }
+                catch (DivisionByZeroError $e) {
+                    return 0;
+                }
+            }
+    
+            $percentageArr = array($percentExp1, $percentExp2, $productPerc);
+            $c = array_sum($percentageArr);
+            $percentageChart = [];
+    
+            foreach ($percentageArr as $num) {
+                $percentage = myGraph($num, $c);
+                $percentageChart[] = $percentage;
+            }
+
         }
-
-        $percentageArr = array($percentExp1, $percentExp2, $productPerc);
-        $c = array_sum($percentageArr);
-        $percentageChart = [];
-
-        foreach ($percentageArr as $num) {
-            $percentage = myGraph($num, $c);
-            $percentageChart[] = $percentage;
-        }
-
-        return view('dashboard', [
-            'section' => 'main', 
-            'logs' => $logs, 
-            'omzetPercent' => $omzetPercent,
-            'soldPercent' => $soldPercent,
-            'lossPercent' => $lossPercent,
-            'prosPercent' => $prosPercent,
-            'pros2' => $pros2,
-            'pros' => $pros,
-            'loss' => $loss,
-            'omzetTotal' => $omzetTotal,
-            'dates' => $lineDates,
-            'lineChart' => $lineValues,
-        ]);
+        
         if (Auth::user()->account_type_fk == 2) {
             return view('dashboard', [
                 'section' => 'main', 
@@ -250,7 +253,7 @@ class DashboardController extends Controller
                         ->count();
         
                 $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                        ->where('account_fk', 2)
+                        ->where('account_fk', Auth::id())
                         ->whereBetween("updated_at", [$dateFrom, $dateTo])
                         ->groupBy('updated_at')
                         ->get();
@@ -323,7 +326,7 @@ class DashboardController extends Controller
                             ->count();
             
                     $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                            ->where('account_fk', 2)
+                            ->where('account_fk', Auth::id())
                             ->whereBetween("updated_at", [$dateFrom, $dateTo])
                             ->groupBy('updated_at')
                             ->get();
@@ -388,7 +391,7 @@ class DashboardController extends Controller
                                     ->count();
         
                     $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                                    ->where('account_fk', 2)
+                                    ->where('account_fk', Auth::id())
                                     ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
                                     ->groupBy('updated_at')
                                     ->get();
@@ -461,7 +464,7 @@ class DashboardController extends Controller
                         ->count();
 
         $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                        ->where('account_fk', 2)
+                        ->where('account_fk', Auth::id())
                         ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
                         ->groupBy('updated_at')
                         ->get();
@@ -527,7 +530,7 @@ class DashboardController extends Controller
                             ->count();
 
             $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                            ->where('account_fk', 2)
+                            ->where('account_fk', Auth::id())
                             ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
                             ->groupBy('updated_at')
                             ->get();
@@ -599,7 +602,7 @@ class DashboardController extends Controller
                 ->count();
 
         $lineResult = ProductHistories::selectRaw('SUM(sold_products * price_per_qty) as CALC, updated_at')
-                ->where('account_fk', 2)
+                ->where('account_fk', Auth::id())
                 ->whereBetween("updated_at", [$dateFrom, $dateTo])
                 ->groupBy('updated_at')
                 ->get();
@@ -760,6 +763,14 @@ class DashboardController extends Controller
         } 
         
         else if ($request->filled('from') || $request->filled('to')) {
+            $toId = Auth::user()->id;
+            if (Auth::user()->account_type_fk == 3) {
+                $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+            }
+            if ($action === 'delete') {
+                Calculator::where('account_fk', $toId)->delete();
+                return redirect()->route('section.calculator');
+            }
             return redirect()->back()->withErrors(['error' => 'Input tanggal harus dipilih dengan benar.'])->withInput();
         }
         else {
@@ -784,7 +795,7 @@ class DashboardController extends Controller
             } else if ($action === 'operational') {
                 // INSERT!
                 
-                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', 2)->where('expense_type_fk', 2)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $exp2 = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->where('expense_type_fk', 2)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
                 if ($exp2 == 0 || $exp2 == null) {
                     $exp2 = 0;
                 }

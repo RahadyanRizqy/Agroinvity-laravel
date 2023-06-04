@@ -45,25 +45,21 @@ if (isset($dates)) {
   </ul> --}}
   @if (Auth::user()->account_type_fk == 2)
   <div class="info-data">
-    <div class="card">
+    <div class="card d-flex justify-content-center align-items-center">
       <div class="head">
         <div>
-          <h2>{{$pros ?? 'null'}}</h2>
-          <p>Keuntungan</p>
+          <p class="text-center" style="font-size: 20px">Keuntungan</p>
+          <h2 class="text-center"style="font-size: 40px">Rp{{$pros ?? 0}}</h2>
         </div>
       </div>
-      <span class="progress" data-value="{{ $prosPercent . "%" ?? 0 . "%"}}"></span>
-      <span class="label">{{ $prosPercent . "%" ?? 0 . "%"}}</span>
     </div>
-    <div class="card">
+    <div class="card d-flex justify-content-center align-items-center">
       <div class="head">
         <div>
-          <h2>{{$loss ?? 'null'}}</h2>
-          <p>Kerugian</p>
+          <p class="text-center" style="font-size: 20px">Kerugian</p>
+          <h2 class="text-center"style="font-size: 40px">Rp{{$loss ?? 0}}</h2>
         </div>
       </div>
-      <span class="progress" data-value="{{ $lossPercent . "%" ?? 0 . "%"}}"></span>
-      <span class="label">{{ $lossPercent . "%" ?? 0 . "%"}}</span>
     </div>
     <div class="card">
       <div class="head">
@@ -78,7 +74,7 @@ if (isset($dates)) {
     <div class="card">
       <div class="head">
         <div>
-          <h2>{{ $omzetTotal ?? 0 }}</h2>
+          <h2>Rp{{ $omzetTotal ?? 0 }}</h2>
           <p>Omzet</p>
         </div>
       </div>
