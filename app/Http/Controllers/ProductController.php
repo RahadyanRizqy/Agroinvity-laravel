@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Accounts;
+use App\Models\ActivityLogs;
 use App\Models\Products;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
@@ -55,7 +57,12 @@ class ProductController extends Controller
                 'price_per_qty' => 'required',
             ]);
 
-            $input['account_fk'] = Auth::id();
+            if (Auth::user()->account_type_fk == 3) {
+                $input['account_fk'] = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+            }
+            else {
+                $input['account_fk'] = Auth::id();
+            }
             $input['stored_at'] = Carbon::now()->format('Y-m-d H:i:s');
             
             $products = Products::where('name', $input['name'])->exists();
@@ -63,7 +70,10 @@ class ProductController extends Controller
                 return redirect()->back()->withErrors(['message' => 'Data sudah ada!']);
             }
             
-            Products::create($input);
+            $getId = Products::create($input)->id;
+            if (Auth::user()->account_type_fk == 3) {
+                $this->LoggerInsert($getId);
+            }
             return redirect()->route('section.production')->with('success','Produk berhasil diinput');
             
         } catch (\Exception $e) {
@@ -104,7 +114,11 @@ class ProductController extends Controller
             ]);
               
             $product->update($input);
-    
+
+            if (Auth::user()->account_type_fk == 3) {
+                $this->LoggerUpdate($product->id);
+            }
+
             return redirect()->route('section.production')
                 ->with('success','Data sudah diubah');
         
@@ -123,5 +137,25 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('section.production')
             ->with('success','Data berhasil dihapus');
+    }
+
+    // FOR WORKER ONLY
+    public function LoggerInsert($id)
+    {
+        ActivityLogs::where('logs', "Telah menginputkan data produk baru dengan id: $id")
+        ->orderBy('id', 'DESC')->limit(1)
+        ->update([
+            'by_child' => true,
+        ]);
+    }
+    
+    // FOR WORKER ONLY
+    public function LoggerUpdate($id)
+    {
+        ActivityLogs::where('logs', "Telah mengubah data produk dengan id: $id")
+        ->orderBy('id', 'DESC')->limit(1)
+        ->update([
+            'by_child' => true,
+        ]);
     }
 }

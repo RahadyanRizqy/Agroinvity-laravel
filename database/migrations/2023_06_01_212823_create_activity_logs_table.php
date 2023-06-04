@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("logs");
             $table->unsignedBigInteger("account_fk");
+            $table->boolean("by_child")->default(false);
             $table->timestamps();
 
             $table->foreign("account_fk")

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Accounts;
+use App\Models\ActivityLogs;
 use Illuminate\Validation\ValidationException;
 use App\Models\Expenses;
 use Carbon\Carbon;
@@ -67,8 +69,13 @@ class ExpenseController extends Controller
             ]);
             
             $input = $request->all();
-    
-            $input['account_fk'] = Auth::id();
+            
+            if (Auth::user()->account_type_fk == 3) {
+                $input['account_fk'] = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+            } 
+            else {
+                $input['account_fk'] = Auth::id();
+            }
             $input['expense_type_fk'] = $type_id;
             $input['stored_at'] = Carbon::now()->format('Y-m-d H:i:s');
             
@@ -79,7 +86,10 @@ class ExpenseController extends Controller
                 return redirect()->back()->withErrors(['message' => 'Data sudah ada!']);
             }
             
-            Expenses::create($input);
+            $getId = Expenses::create($input)->id;
+            if (Auth::user()->account_type_fk == 3) {
+                $this->LoggerInsert($getId, $type_id);
+            }
             if ($type_id == 1) {
                 return redirect()->route('section.expenses', ['type_id' => $type_id])->with('success','Bahan baku berhasil diinput');
             } else if ($type_id == 2) {
@@ -153,6 +163,10 @@ class ExpenseController extends Controller
             ]);
             
             $expense->update($input);
+
+            if (Auth::user()->account_type_fk == 3) {
+                $this->LoggerUpdate($expense->id, $expense->expense_type_fk);
+            }
     
             return redirect()->route('section.expenses', ['type_id' => $expense->expense_type_fk])
                 ->with('success','Data sudah diubah');
@@ -172,5 +186,41 @@ class ExpenseController extends Controller
         $expense->delete();
         return redirect()->route('section.expenses', ['type_id' => $expense->expense_type_fk])
             ->with('success','Data berhasil dihapus');
+    }
+
+    // FOR WORKER ONLY
+    public function LoggerInsert($id, $type_id)
+    {
+        if ($type_id == 1) {
+            ActivityLogs::where('logs', "Telah menginputkan data bahan baku baru dengan id: $id")
+            ->orderBy('id', 'DESC')->limit(1)
+            ->update([
+                'by_child' => true,
+            ]);
+        } else if ($type_id == 2){
+            ActivityLogs::where('logs', "Telah menginputkan data operasional baru dengan id: $id")
+            ->orderBy('id', 'DESC')->limit(1)
+            ->update([
+                'by_child' => true,
+            ]);
+        }
+    }
+    
+    // FOR WORKER ONLY
+    public function LoggerUpdate($id, $type_id)
+    {
+        if ($type_id == 1) {
+            ActivityLogs::where('logs', "Telah mengubah data bahan baku dengan id: $id")
+            ->orderBy('id', 'DESC')->limit(1)
+            ->update([
+                'by_child' => true,
+            ]);
+        } else if ($type_id == 2){
+            ActivityLogs::where('logs', "Telah mengubah data operasional dengan id: $id")
+            ->orderBy('id', 'DESC')->limit(1)
+            ->update([
+                'by_child' => true,
+            ]);
+        }
     }
 }

@@ -1,15 +1,19 @@
 @php
 // $expenses = [];
 // $incomes = [];
-if (count($lineChart) == 1) {
-    array_unshift($lineChart, 0);
+if (isset($lineChart)) {
+  if (count($lineChart) == 1) {
+      array_unshift($lineChart, 0);
+  }
 }
 
-if (count($dates) == 1) {
-    $date = date_create($dates[0]);
-    date_sub($date,date_interval_create_from_date_string("1 days"));
-    $date = date_format($date,"Y-m-d H:i:s");
-    array_unshift($dates, $date);
+if (isset($dates)) {
+  if (count($dates) == 1) {
+      $date = date_create($dates[0]);
+      date_sub($date,date_interval_create_from_date_string("1 days"));
+      $date = date_format($date,"Y-m-d H:i:s");
+      array_unshift($dates, $date);
+  }
 }
 // $percentageChart = [5/10,4/10,1/10];
 @endphp
@@ -39,6 +43,7 @@ if (count($dates) == 1) {
     <li class="divider">/</li>
     <li><a href="#" class="active">Dashboard</a></li>
   </ul> --}}
+  @if (Auth::user()->account_type_fk == 2)
   <div class="info-data">
     <div class="card">
       <div class="head">
@@ -102,13 +107,13 @@ if (count($dates) == 1) {
               <div class="sl-content">
                 @if (Str::contains($log->logs, 'bahan baku'))
                 <small class="text-muted">Bahan Baku</small>
-                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-1) }}</a></p>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
                 @elseif (Str::contains($log->logs, 'operasional'))
                 <small class="text-muted">Operasional</small>
-                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-1) }}</a></p>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
                 @else
                 <small class="text-muted">Produk</small>
-                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('product.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-1) }}</a></p>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('product.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
                 @endif
               </div>
             </div>    
@@ -118,13 +123,70 @@ if (count($dates) == 1) {
       </div>
     </div>
   </div>
+  @elseif (Auth::user()->account_type_fk == 1)
+  <div class="data">
+    <div class="content-data">
+      <div class="head">
+        <h3>Akun terdaftar</h3>
+      </div>
+      <div class="accounts-registered">
+        <div id="accounts-registered"></div>
+      </div>
+    </div>
+    <div class="content-data">
+      <div class="head">
+        <h3>Status Aktif</h3>
+      </div>
+      <div class="chat-box">
+        <div class="card-content">
+          <div class="streamline">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @else
+  <div class="data">
+    <div class="content-data">
+      <div class="head">
+        <h3>Riwayat Aktivitas</h3>
+      </div>
+      <div class="chat-box">
+        <div class="card-content">
+          <div class="streamline">
+            @foreach ($logs as $log)
+            <div class="sl-item sl-primary">
+              <div class="sl-content">
+                @if (Str::contains($log->logs, 'bahan baku'))
+                <small class="text-muted">Bahan Baku</small>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
+                @elseif (Str::contains($log->logs, 'operasional'))
+                <small class="text-muted">Operasional</small>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('expense.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
+                @else
+                <small class="text-muted">Produk</small>
+                <p>{{ substr($log->logs, 0, strlen($log->logs)-2) }} <a href="{{ route('product.history', substr($log->logs, strlen($log->logs)-1)) }}" style="">{{ substr($log->logs, strlen($log->logs)-2) }}</a></p>
+                @endif
+              </div>
+            </div>    
+            @endforeach
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @endif
 <?php
-$convertedDates = [];
-foreach ($dates as $date) {
-    $dateTime = new DateTime($date);
-    $convertedDates[] = $dateTime->format('Y-m-d\TH:i:s.v\Z');
+if (isset($dates)) {
+  $convertedDates = [];
+  foreach ($dates as $date) {
+      $dateTime = new DateTime($date);
+      $convertedDates[] = $dateTime->format('Y-m-d\TH:i:s.v\Z');
+  }
 }
 ?>
+
+@if (Auth::user()->account_type_fk == 2)
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="/js/dashboard.js"></script>
 <script>
@@ -172,4 +234,5 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
 </script>
+@endif
 </main>

@@ -27,25 +27,33 @@ class DashboardController extends Controller
     {
         $currentMonth = Carbon::now()->format('Y-m');
         $toId = Auth::id();
+        if (Auth::user()->account_type_fk == 3) {
+            $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
+        }
+        $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
+        $pros2 = Products::select(DB::raw('SUM(sold_products) as total'))->where('account_fk', $toId)->get()->first()->total;
         
-        $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
-        $pros2 = Products::select(DB::raw('SUM(sold_products) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
-        
-        $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
-        $loss2 = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        $loss = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
+        $loss2 = Products::select(DB::raw('SUM(stock_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
         
         $totalProsLoss = $pros + $loss;
-        $prosPercent = number_format(($pros/$totalProsLoss) * 100, 2);
-        $lossPercent = number_format(($loss/$totalProsLoss) * 100, 2);
+        $prosPercent = number_format(($pros/$totalProsLoss) * 100, 2) ?? 0;
+        $lossPercent = number_format(($loss/$totalProsLoss) * 100, 2) ?? 0;
         
+        // if (Auth::user()->account_type_fk == 2) {
+
+        // }
         $logs = ActivityLogs::where('account_fk', $toId)->orderBy('id', 'DESC')->limit(5)->get();
+        if (Auth::user()->account_type_fk == 3) {
+            $logs = ActivityLogs::where('account_fk', $toId)->where('by_child', true)->orderBy('id', 'DESC')->limit(6)->get();
+        }
 
         $soldProd = Products::selectRaw('SUM(sold_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
         $stockProd = Products::selectRaw('SUM(stock_products*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
 
         $totalSoldStock = $soldProd + $stockProd;
-        $soldPercent = number_format(($soldProd/$totalSoldStock) * 100, 2);
-        $stockPercent = number_format(($stockProd/$totalSoldStock) * 100, 2);
+        $soldPercent = number_format(($soldProd/$totalSoldStock) * 100, 2) ?? 0;
+        $stockPercent = number_format(($stockProd/$totalSoldStock) * 100, 2) ?? 0;
 
         $omzetTotal = Expenses::selectRaw('SUM(quantity*price_per_qty) as calc')->where('account_fk', $toId)->first()->calc;
         // $omzetPercent = number_format(($omzetTotal/$totalSoldStock) * 100, 2);
@@ -98,18 +106,6 @@ class DashboardController extends Controller
             $percentage = myGraph($num, $c);
             $percentageChart[] = $percentage;
         }
-        
-
-        // return view('dashboard', 
-        // [
-        //     'section' => 'report', 
-        //     'incomes' => $products, 
-        //     'expenses' => $expenses, 
-        //     'percentageChart' => $percentageChart, 
-        //     'percentageArr' => $percentageArr, 
-        //     'dates' => $lineDates, 
-        //     'lineChart' => $lineValues
-        // ]);
 
         return view('dashboard', [
             'section' => 'main', 
@@ -124,18 +120,56 @@ class DashboardController extends Controller
             'omzetTotal' => $omzetTotal,
             'dates' => $lineDates,
             'lineChart' => $lineValues,
-
         ]);
+        if (Auth::user()->account_type_fk == 2) {
+            return view('dashboard', [
+                'section' => 'main', 
+                'logs' => $logs, 
+                'omzetPercent' => $omzetPercent,
+                'soldPercent' => $soldPercent,
+                'lossPercent' => $lossPercent,
+                'prosPercent' => $prosPercent,
+                'pros2' => $pros2,
+                'pros' => $pros,
+                'loss' => $loss,
+                'omzetTotal' => $omzetTotal,
+                'dates' => $lineDates,
+                'lineChart' => $lineValues,
+            ]);
+        }
+        else if (Auth::user()->account_type_fk == 3) {
+            return view('dashboard', [
+                'section' => 'main',
+                'logs' => $logs,
+            ]);
+        } else {
+            return view('dashboard', [
+                'section' => 'main',
+            ]);
+        }
         // dd($prosPercent, $lossPercent);
     }
 
     public function indexExpense($type_id) {
-        // $expenses = Expenses::where('expense_type_fk', $type_id)
-        //     ->where('account_fk', Auth::id())->get();
-        $expenses = Accounts::with('ownExpense.expenseType')
-            ->find(Auth::id())
-            ->ownExpense
-            ->where('expenseType.id', $type_id);
+        if (Auth::user()->account_type_fk == 2) {
+            $expenses = Accounts::with('ownExpense.expenseType')
+                ->find(Auth::id())
+                ->ownExpense
+                ->where('expenseType.id', $type_id);
+    
+            if ($type_id == 1) {
+                return view('dashboard', ['expenses' => $expenses, 'section' => 'expense', 'type_id' => $type_id])
+                    ->with('i', (request()->input('page', 1) - 1) * 10);
+            } else if ($type_id == 2) {
+                return view('dashboard', ['expenses' => $expenses, 'section' => 'expense', 'type_id' => $type_id])
+                    ->with('i', (request()->input('page', 1) - 1) * 10);
+            }
+        }        
+        $expenses = Accounts::with('parentAcc.ownExpense.expenseType')
+                            ->find(Auth::id())
+                            ->parentAcc
+                            ->ownExpense
+                            ->where('expenseType.id', $type_id);
 
         if ($type_id == 1) {
             return view('dashboard', ['expenses' => $expenses, 'section' => 'expense', 'type_id' => $type_id])
@@ -144,6 +178,7 @@ class DashboardController extends Controller
             return view('dashboard', ['expenses' => $expenses, 'section' => 'expense', 'type_id' => $type_id])
                 ->with('i', (request()->input('page', 1) - 1) * 10);
         }
+
     }
 
     public function indexArticle() # SHOW
@@ -156,10 +191,17 @@ class DashboardController extends Controller
     }
 
     public function indexProduction() {
-        $products = Accounts::with('ownProduct')->find(Auth::id())->ownProduct;
+        if (Auth::user()->account_type_fk == 2) {
+            $products = Accounts::with('ownProduct')->find(Auth::id())->ownProduct;
+            return view('dashboard', ['productions' => $products, 'section' => 'product'])
+                ->with('i', (request()->input('page', 1) - 1) * 15);
+        }
+        $products = Accounts::with('parentAcc.ownProduct')
+                            ->find(Auth::id())
+                            ->parentAcc
+                            ->ownProduct;
         return view('dashboard', ['productions' => $products, 'section' => 'product'])
             ->with('i', (request()->input('page', 1) - 1) * 15);
-
     }
 
     public function dashboardLogout(Request $request)
@@ -662,7 +704,7 @@ class DashboardController extends Controller
             } else if ($action === 'product') {
                 // INSERT!
 
-                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $pro = Products::select(DB::raw('SUM(total_qty*price_per_qty) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
                 if ($pro == 0 || $pro == null) {
                     $pro = 0;
                 }
@@ -755,7 +797,7 @@ class DashboardController extends Controller
 
             } else if ($action === 'product') {
                 // INSERT!
-                $pro = Products::select(DB::raw('SUM(total_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $pro = Products::select(DB::raw('SUM(total_qty*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
                 if ($pro == 0 || $pro == null) {
                     $pro = 0;
                 }
