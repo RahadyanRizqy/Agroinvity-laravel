@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class AccountSeeder extends Seeder
 {
@@ -15,7 +16,10 @@ class AccountSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void {
-        $countAccount = 9;
+        $faker = Faker::create();
+
+        $startDate = '2023-05-25 00:00:00';
+        $endDate = '2023-06-01 00:00:00';
         
         $accountSeed = array(
             'fullname' => [
@@ -86,17 +90,17 @@ class AccountSeeder extends Seeder
                 6,
                 7,
             ],
-            'created_at' => [
-                '2023-05-25 11:35:09',
-                '2023-04-15 11:35:09',
-                '2023-05-20 11:35:09',
-                '2023-05-01 11:35:09',
-                '2023-05-10 11:35:09',
-                '2023-05-15 11:35:09',
-                '2023-05-15 11:35:09',
-                '2023-05-15 11:35:09',
-                '2023-05-15 11:35:09',
-            ],
+            // 'created_at' => [
+            //     '2023-05-25 11:35:09',
+            //     '2023-04-15 11:35:09',
+            //     '2023-05-20 11:35:09',
+            //     '2023-05-01 11:35:09',
+            //     '2023-05-10 11:35:09',
+            //     '2023-05-15 11:35:09',
+            //     '2023-05-15 11:35:09',
+            //     '2023-05-15 11:35:09',
+            //     '2023-05-15 11:35:09',
+            // ],
             // 'status' => [
             //     true,
             //     true,
@@ -120,7 +124,7 @@ class AccountSeeder extends Seeder
                     'phone_number' => $accountSeed['phone_number'][$i],
                     'account_type_fk' => $accountSeed['account_type_fk'][$i],
                     'account_rel_fk' => $accountSeed['account_rel_fk'][$i],
-                    'registered_at' => $accountSeed['created_at'][$i],
+                    'registered_at' => $faker->dateTimeBetween($startDate, $endDate)->format('Y-m-d H:i:s'),
                     // 'status' => $accountSeed['status'][$i],
                 ]
             );

@@ -121,22 +121,20 @@ if (isset($dates)) {
   </div>
   @elseif (Auth::user()->account_type_fk == 1)
   <div class="data">
-    <div class="content-data">
+    <div class="content-data-accounts">
       <div class="head">
-        <h3>Akun terdaftar</h3>
+        <h3 class="text-center">Akun mitra terdaftar</h3>
       </div>
-      <div class="accounts-registered">
-        <div id="accounts-registered"></div>
+      <div class="accounts-registered mt-5 pt-5">
+        <h1 class="text-center" style="font-size: 150px">{{ $partnerAcc ?? 0 }}</h1>
       </div>
     </div>
-    <div class="content-data">
+    <div class="content-data-accounts">
       <div class="head">
-        <h3>Status Aktif</h3>
+        <h3 class="text-center">Status aktif</h3>
       </div>
-      <div class="chat-box">
-        <div class="card-content">
-          <div class="streamline">
-          </div>
+      <div class="accounts-status d-flex justify-content-center align-items-center mt-5 pt-5">
+        <div id="accounts-status">
         </div>
       </div>
     </div>
@@ -180,11 +178,15 @@ if (isset($dates)) {
       $convertedDates[] = $dateTime->format('Y-m-d\TH:i:s.v\Z');
   }
 }
+  $series = [0, 0];
+  if (isset($active) && isset($nonActive)) {
+    $series = [$active, $nonActive];
+  }
 ?>
 
-@if (Auth::user()->account_type_fk == 2)
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="/js/dashboard.js"></script>
+@if (Auth::user()->account_type_fk == 2)
 <script>
     var options = {
         series: [{
@@ -215,6 +217,32 @@ if (isset($dates)) {
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 </script>
+@elseif(Auth::user()->account_type_fk == 1)
+<script>
+        var options = {
+            series: <?php echo json_encode($series, JSON_HEX_TAG); ?>,
+            chart: {
+            width: 375,
+            type: 'pie',
+        },
+        labels: ['Aktif', 'Nonaktif'],
+        responsive: [{
+            breakpoint: 480,
+            options: {
+            chart: {
+                width: 200
+            },
+            legend: {
+                position: 'bottom'
+                }
+              }
+          }],
+        };
+        
+        var chart = new ApexCharts(document.querySelector("#accounts-status"), options);
+        chart.render();
+</script>
+@endif
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var element = document.querySelector('.apexcharts-toolbar');
@@ -230,5 +258,5 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
     integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
 </script>
-@endif
+
 </main>

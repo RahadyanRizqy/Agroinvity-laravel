@@ -542,3 +542,22 @@ main .modal.fade.show .modal-dialog {
 }
 
 /* admin panels */
+main .data .content-data-accounts {
+	flex-grow: 1;
+	flex-basis: 400px;
+	height: 70vh;
+	padding: 20px;
+	background: var(--light);
+	border-radius: 10px;
+	box-shadow: 4px 4px 16px rgba(0, 0, 0, .1);
+}
+
+main .data .content-data-status {
+	flex-grow: 1;
+	flex-basis: 400px;
+	height: 70vh;
+	padding: 20px;
+	background: var(--light);
+	border-radius: 10px;
+	box-shadow: 4px 4px 16px rgba(0, 0, 0, .1);
+}

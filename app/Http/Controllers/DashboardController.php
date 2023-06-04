@@ -146,8 +146,22 @@ class DashboardController extends Controller
                 'logs' => $logs,
             ]);
         } else {
+            $partnerAcc = Accounts::where('account_type_fk', 2)->count();
+
+            try {
+                $active = Accounts::where('account_type_fk', 2)->where('remaining_days', '>', 1)->count()/$partnerAcc;
+                $nonActive = Accounts::where('account_type_fk', 2)->where('remaining_days', '<', 1)->count()/$partnerAcc;
+                // $nonActive = number_format( (Accounts::where('account_type_fk', 2)->where('remaining_days', '<', 1)->count()/$partnerAcc)*100, 2);
+            } catch (DivisionByZeroError $e) {
+                $active = 0;
+                $nonActive = 0;
+            }
             return view('dashboard', [
                 'section' => 'main',
+                'partnerAcc' => $partnerAcc,
+                'active' => $active,
+                'nonActive' => $nonActive,
+
             ]);
         }
         // dd($prosPercent, $lossPercent);
