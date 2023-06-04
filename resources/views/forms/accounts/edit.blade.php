@@ -111,8 +111,23 @@
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="cth: rahasia" value="">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="cth: rahasia" value="">
                 </div>
+                <input type="checkbox" id="showPasswordCheckbox"><span style="color: white"> Tampilkan/Sembunyikan password</span><br>
+                <script>
+                    $(document).ready(function() {
+                        $('#showPasswordCheckbox').change(function() {
+                            var passwordField = $('#password');
+                            var isChecked = $(this).is(':checked');
+                            
+                            if (isChecked) {
+                                passwordField.attr('type', 'text');
+                            } else {
+                                passwordField.attr('type', 'password');
+                            }
+                            });
+                        });
+                </script>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
                 <a class="btn btn-danger" href="{{ url()->previous() }}">Batal</a>
             </form>

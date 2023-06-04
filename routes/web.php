@@ -9,6 +9,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TestController;
 use Illuminate\Contracts\Session\Session;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -96,7 +97,7 @@ Route::resource('articles', ArticleController::class);
 
 Route::get('forbidden', function() { return view('forbidden'); });
 
-Route::get('/test', function() { return view('test'); });
+Route::get('/test', [TestController::class, 'index']);
 
 
 Route::post('/print', [DashboardController::class, 'printReport'])->name('getpdf');

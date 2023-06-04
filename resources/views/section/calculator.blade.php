@@ -64,6 +64,9 @@
                         <div class="buttons">
                             <button class="btn btn-primary mb-3" type="submit" name="action" value="product">Hitung Pemasukan Produk</button>
                         </div>
+                        <div class="buttons">
+                            <button class="btn btn-danger mb-3" type="submit" name="action" value="delete">Hapus History</button>
+                        </div>
                         @if (Auth::user()->account_type_fk == 2)
                         <div class="buttons">
                             <button class="btn btn-primary mb-3" type="submit" name="action" value="omzet">Hitung Omzet</button>

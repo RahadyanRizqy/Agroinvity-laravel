@@ -180,6 +180,8 @@ class AccountController extends Controller
                     return redirect()->back()->withErrors(['error' => 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait.'])->withInput();
                 }
                 $tokenGen = Faker::create()->regexify('[A-Za-z0-9]{30}');
+
+                // if ($request->getHost())
                 Tokens::create([
                     'token' => $tokenGen, 
                     'account_fk' => Accounts::where('email', $input['email'])->first()->id, 
@@ -229,7 +231,7 @@ class AccountController extends Controller
     public function doResetPassword(Request $request, $id) 
     {
         try {
-            $token = Tokens::where('account_fk', $id)->orderBy('id', 'DESC')->first()->token;
+            $token = Tokens::orderBy('id', 'DESC')->first()->token;
             if (Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))
                 ->between
                     (
@@ -238,26 +240,24 @@ class AccountController extends Controller
                     )
                 ) 
             {
-                $tokenAcc = Tokens::with('tokenOf')->where('token', $token)->first()->tokenOf;
-                return view('forms.password_reset', ['account' => $tokenAcc, 'expiredstatus' => 0]);
+                $input = $request->validate([
+                    'password' => 'required|min:8|max:255',
+                    'confirm_password' => 'required|min:8|max:255',
+                ]);
+        
+                if ($input['password'] != $input['confirm_password']) {
+                    return redirect()->back()->withErrors(['error' => 'Isian password tidak sesuai.'])->withInput();
+                } else {
+                    $input['password'] = Hash::make($input['password']);
+                      
+                    Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
+                    Tokens::where('account_fk', $id)->update(['status' => false]);
+                    return redirect()->route('login.index')->with('success','Password berhasil diubah');
+                }
             }
             else
             {
                 return view('forms.password_reset', ['account' => false, 'expiredstatus' => 1]);
-            }
-            $input = $request->validate([
-                'password' => 'required|min:8|max:255',
-                'confirm_password' => 'required|min:8|max:255',
-            ]);
-    
-            if ($input['password'] != $input['confirm_password']) {
-                return redirect()->back()->withErrors(['error' => 'Isian password tidak sesuai.'])->withInput();
-            } else {
-                $input['password'] = Hash::make($input['password']);
-                  
-                Accounts::where('id', $id)->update(['password' => "{$input['password']}"]);
-                Tokens::where('account_fk', $id)->update(['status' => false]);
-                return redirect()->route('login.index')->with('success','Password berhasil diubah');
             }
     
         

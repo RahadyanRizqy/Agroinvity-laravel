@@ -14,6 +14,8 @@ class LoginController extends Controller
      */
     public function index()
     {
+        // $request = new Request();
+        // dd($request()->getHttpHost());
         return view('usersession.login');
     }
 
