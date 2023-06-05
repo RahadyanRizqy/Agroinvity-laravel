@@ -8,7 +8,6 @@ class TestController extends Controller
 {
     public function index()
     {
-        $request = new Request();
-        dd($request);
+        dd(request()->getHttpHost());
     }
 }
