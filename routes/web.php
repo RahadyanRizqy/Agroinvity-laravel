@@ -47,6 +47,7 @@ Route::get('/report_print', function() {
 // SESI
 Route::resource('login', LoginController::class);
 Route::resource('register', RegisterController::class);
+Route::get('usersession', function() { return view('usersession/sessionview'); });
 
 // DASHBOARD
 
