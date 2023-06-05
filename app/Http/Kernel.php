@@ -68,9 +68,10 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
     
-    // protected $routeMiddleware = [
-    //     // Other middleware entries...
-    //     'auth.subdomain' => \App\Http\Middleware\RedirectIfNotAuthenticatedToSubdomains::class,
-    // ];
+    protected $routeMiddleware = [
+        // Other middleware entries...
+        // 'auth.subdomain' => \App\Http\Middleware\RedirectIfNotAuthenticatedToSubdomains::class,
+        'redirectIfNotLoggedIn' => \App\Http\Middleware\RedirectIfNotLoggedIn::class,
+    ];
     
 }

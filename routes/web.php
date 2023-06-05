@@ -50,31 +50,33 @@ Route::resource('register', RegisterController::class);
 
 // DASHBOARD
 
-Route::get('dashboard', [DashboardController::class, 'showDashboard'])->name('section.main');
-Route::get('dashboard/article', [DashboardController::class, 'indexArticle'])->name('section.article');
-Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->name('section.report');
-Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
-Route::get('dashboard/products', [DashboardController::class, 'indexProduction'])->name('section.production');
-Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
-Route::get('dashboard/account', [AccountController::class, 'index'])->name('section.account');
-Route::post('dashboard/report/result', [DashboardController::class, 'showReportResults'])->name('section.reportresults');
-Route::post('dashboard/calculator/result', [DashboardController::class, 'showCalcResult'])->name('section.calcresult');
-// Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
-Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
-Route::get('dashboard/profile', [DashboardController::class, 'dashboardProfile'])->name('dashboard.profile');
+Route::middleware(['redirectIfNotLoggedIn'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'showDashboard'])->name('section.main');
+    Route::get('dashboard/article', [DashboardController::class, 'indexArticle'])->name('section.article');
+    Route::get('dashboard/report', [DashboardController::class, 'indexReport'])->name('section.report');
+    Route::get('dashboard/calculator', [DashboardController::class, 'indexCalculator'])->name('section.calculator');
+    Route::get('dashboard/products', [DashboardController::class, 'indexProduction'])->name('section.production');
+    Route::get('dashboard/expenses/{type_id}', [DashboardController::class, 'indexExpense'])->name('section.expenses');
+    Route::get('dashboard/account', [AccountController::class, 'index'])->name('section.account');
+    Route::post('dashboard/report/result', [DashboardController::class, 'showReportResults'])->name('section.reportresults');
+    Route::post('dashboard/calculator/result', [DashboardController::class, 'showCalcResult'])->name('section.calcresult');
+    Route::get('dashboard/logout', [DashboardController::class, 'dashboardLogout'])->name('session.destroy');
+    Route::get('dashboard/profile', [DashboardController::class, 'dashboardProfile'])->name('dashboard.profile');
+    // CRUD PENGELUARAN
+    Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
+    Route::post('expenses/{type_id}/store', [ExpenseController::class, 'store'])->name('expenses.store');
+    
+    Route::delete('expenses/{expense}/delete', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+    Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
+    Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->name('expenses.update');
+    Route::resource('dashboard/accounts', AccountController::class);
+    Route::get('dashboard/expense/{expense}/history', [DashboardController::class, 'indexExpenseHistory'])->name('expense.history');
+    Route::get('dashboard/product/{product}/history', [DashboardController::class, 'indexProductHistory'])->name('product.history');
+    Route::post('/print', [DashboardController::class, 'printReport'])->name('getpdf');
+    Route::resource('products', ProductController::class);
+    Route::resource('articles', ArticleController::class);
+});
 
-// CRUD PENGELUARAN
-Route::get('expenses/{type_id}/create', [ExpenseController::class, 'create'])->name('expenses.create');
-Route::post('expenses/{type_id}/store', [ExpenseController::class, 'store'])->name('expenses.store');
-
-Route::delete('expenses/{expense}/delete', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
-Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
-Route::put('expenses/{expense}/update', [ExpenseController::class, 'update'])->name('expenses.update');
-
-Route::get('dashboard/expense/{expense}/history', [DashboardController::class, 'indexExpenseHistory'])->name('expense.history');
-Route::get('dashboard/product/{product}/history', [DashboardController::class, 'indexProductHistory'])->name('product.history');
-
-Route::get('password_reset/{account}', [AccountController::class, 'indexPasswordReset'])->name('password.reset');
 
 
 
@@ -85,23 +87,16 @@ Route::get('password_reset/{account}', [AccountController::class, 'indexPassword
 // Route::get('product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
 // Route::put('product/{product}/update', [ProductController::class, 'update'])->name('product.update');
 
-Route::resource('products', ProductController::class);
 
-Route::resource('dashboard/accounts', AccountController::class);
 
 // CRUD PEMASUKAN
 
-Route::resource('articles', ArticleController::class);
 
 // FORBIDDEN ACCESS
 
 Route::get('forbidden', function() { return view('forbidden'); });
-
 Route::get('/test', [TestController::class, 'index']);
-
-
-Route::post('/print', [DashboardController::class, 'printReport'])->name('getpdf');
-
+Route::get('password_reset/{account}', [AccountController::class, 'indexPasswordReset'])->name('password.reset');
 Route::get('/reset_password/{token}', [AccountController::class, 'checkToken']);
 Route::get('/request_token', [AccountController::class, 'indexToken'])->name('request.token');
 Route::post('/request_token/sent', [AccountController::class, 'sendTokenRequest'])->name('send.token');
