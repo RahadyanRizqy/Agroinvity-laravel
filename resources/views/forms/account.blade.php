@@ -42,6 +42,34 @@
     .sweetalert {
         z-index: 100;
     }
+
+    body{
+        font-family: Poppins;
+        background-image: url('/assets/img/background.png');
+        background-size: cover;
+    }
+
+    .formcontainer{
+        
+        position: absolute;
+        top: 15vh;
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 50px #000;
+        color:#1E1E1E;
+        font-size:14px;
+        font-weight:bold;
+        width:30%;
+        background: #004b2db8;
+
+    }
+    .sweetalert {
+        z-index: 100;
+    }
+
+    h3 {
+        color: white;
+    }
 </style>
 @endpush
 
@@ -62,10 +90,10 @@
 </div>
 
 @section('content')
-<div class="content">
-    <div class="form-container">
-        <div class="edit-form col-4">
-            <form id="account-crud-form" action="{{ route('accounts.store')}}" method="post">
+<section class="container-fluid">
+    <section class="row justify-content-center">
+        <section class="col-12 col-sm-4 col-md-4">
+            <form class="formcontainer" id="account-crud-form" action="{{ route('accounts.store')}}" method="post">
                 @csrf
                 <div class="form-group">
                     <label for="fullname" class="form-label">Nama Akun</label>
@@ -86,7 +114,7 @@
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Tambahkan</button>
                 <a class="btn btn-danger" href="{{ url()->previous() }}">Batal</a>
             </form>
-        </div>
-    </div>
-</div>
+        </section>
+    </section>
+</section>
 @endsection

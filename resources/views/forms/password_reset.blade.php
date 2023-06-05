@@ -1,4 +1,4 @@
-@extends('master')
+@extends('forms.form_layout')
 
 {{-- @if($account->account_type_fk == 3)
     @section('title', 'Ubah Akun Pegawai')
@@ -52,6 +52,40 @@
     .form-container > p {
         color: white;
     }
+
+    *{
+        padding: 0;
+        margin: 0;
+    }
+
+    body{
+        font-family: Poppins;
+        background-image: url('/assets/img/background.png');
+        background-size: cover;
+    }
+
+    .formcontainer{
+        
+        position: absolute;
+        height: 340px;
+        top: 25vh;
+        padding: 20px 50px 10px 50px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 50px #000;
+        color:#1E1E1E;
+        font-size:14px;
+        font-weight:bold;
+        width:30%;
+        background: #004b2db8;
+
+    }
+    .sweetalert {
+        z-index: 100;
+    }
+
+    p {
+        color: white;
+    }
 </style>
 @endpush
 
@@ -71,13 +105,13 @@
 </div>
 
 @section('content')
-<div class="content">
-    <div class="form-container">
-        @if ($expiredstatus == 0)
-        <p class="text-center">Reset password pada email</p>
-        <p class="text-center">{{$account->email}}</p>
-        <div class="edit-form col-md-8">
-            <form id="account-crud-form" action="{{ route('token.accupdate', $account->id)}}" method="POST" enctype="multipart/form-data">
+<section class="container-fluid">
+    <section class="row justify-content-center">
+        <section class="col-12 col-sm-4 col-md-4">
+            @if ($expiredstatus == 0)
+            <form class="formcontainer" id="account-crud-form" action="{{ route('token.accupdate', $account->id)}}" method="POST" enctype="multipart/form-data">
+                <p class="text-center">Reset password pada email</p>
+                <p class="text-center">{{$account->email}}</p>
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -108,16 +142,21 @@
                 </script>
                 <button type="submit" class="btn form-button btn-success" name="save-btn">Perbarui</button>
             </form>
-        </div>
         @elseif ($expiredstatus == 1)
-        <div class="edit-form col-md-8 expired-form">
+        <div class="formcontainer d-flex align-items-center">
             <h3 class="text-center" style="color: white;">Token habis silahkan lakukan permintaan lagi</h3>
         </div>
         @elseif ($expiredstatus == 2)
-        <div class="edit-form col-md-8 expired-form">
+        <div class="formcontainer d-flex align-items-center">
             <h3 class="text-center" style="color: white;">Token tidak valid</h3>
         </div>
         @endif
+        </section>
+    </section>
+</section>
+{{-- <div class="content">
+    <div class="form-container">
+        
     </div>
-</div>
+</div> --}}
 @endsection
