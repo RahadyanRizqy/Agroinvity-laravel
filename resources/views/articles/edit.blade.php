@@ -1,43 +1,46 @@
-@extends('master')
+@extends('articles.layout')
 
-@section('title', 'Agroinvity')
+@section('title', 'Ubah Artikel')
 
 @push('style')
     <style>
-                body {
-            margin: 0;
+        *{
             padding: 0;
-            background-color:  #057455;
+            margin: 0;
+        }
+        body{
+            font-family: Poppins;
+            background-image: url('/assets/img/background.png');
+            background-size: cover;
         }
 
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+        .formcontainer{
+            
+            position: absolute;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 50px #000;
+            color:#1E1E1E;
+            font-size:14px;
+            font-weight:bold;
+            /* width: 50%; */
+            width: 1000px;
 
-        .form-container {
-            background-color: #263043;
-            width: 900px;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 0.5rem;
-            box-shadow: 5px 5px 5px 5px #263043;
-            flex-direction: column;
-        }
+            background: #004b2db8;
 
-        .form-group {
-            width: 800px;
-            margin: 10px 10px;
+        }
+        .sweetalert {
+            z-index: 100;
         }
 
         label {
             color: white;
         }
-    </style>
+        
+        strong {
+            color: white;
+        }
+</style>
 @endpush
 
 <div class="sweetalert">
@@ -57,9 +60,9 @@
 </div>
 
 @section('content')
-<section class="main-container">
-    <div class="form-container">
-        <form action="{{ route('articles.update', $article->id) }}" method="POST" enctype="multipart/form-data">
+<section class="container-fluid">
+    <section class="row justify-content-center">
+        <form class="formcontainer" action="{{ route('articles.update', $article->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="form-group">
@@ -80,6 +83,6 @@
                 <a class="btn btn-danger" href="{{ route('articles.index') }}">Kembali</a>
             </div>
         </form>
-    </div>
+    </section>
 </section>
 @endsection
