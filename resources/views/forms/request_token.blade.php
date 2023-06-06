@@ -81,6 +81,10 @@
     .sweetalert {
         z-index: 100;
     }
+
+    p {
+        color: white;
+    }
 </style>
 @endpush
 
@@ -102,10 +106,10 @@
 @section('content')
 <section class="container-fluid">
     <section class="row justify-content-center">
-        <p>Konfirmasikan email</p>
         <section class="col-12 col-sm-4 col-md-4">
-        <div class="edit-form col-md-8">
-            <form class="formcontainer" id="account-crud-form" action="{{ route('send.token') }}" method="POST" enctype="multipart/form-data">
+            <div class="edit-form col-md-8">
+                <form class="formcontainer" id="account-crud-form" action="{{ route('send.token') }}" method="POST" enctype="multipart/form-data">
+                    <p class="text-center">Konfirmasikan email</p>
                 @csrf
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>

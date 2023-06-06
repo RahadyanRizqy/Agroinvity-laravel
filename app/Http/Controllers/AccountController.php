@@ -165,48 +165,48 @@ class AccountController extends Controller
     public function sendTokenRequest(Request $request)
     {
         
-        try {
-            $input = $request->validate([
-                'email' => 'required|email:dns|min:2|max:255|'
-            ], [
-                'email.required' => 'Input email harus diisi'
-            ]);
-            $emailExists = Accounts::where('email', $input['email'])->exists();
-            if ($emailExists) {
-                $host = '127.0.0.1:8000';
-                if (request()->getHostHttp()) {
-                    $host = request()->getHostHttp();
-                }
-                
-                if (Accounts::where('email', $input['email'])->first()->account_type_fk == 1) {
-                    return redirect()->back()->withErrors(['error' => 'Bila admin salah/lupa password silahkan reset di database'])->withInput();
-                } else if (Accounts::where('email', $input['email'])->first()->account_type_fk == 3) {
-                    return redirect()->back()->withErrors(['error' => 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait.'])->withInput();
-                }
-                $tokenGen = Faker::create()->regexify('[A-Za-z0-9]{30}');
-
-                // if ($request->getHost())
-                Tokens::create([
-                    'token' => $tokenGen, 
-                    'account_fk' => Accounts::where('email', $input['email'])->first()->id, 
-                    'requested_at' => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
-                $data = [
-                    'subject' => 'Agroinvity',
-                    'body' => "Ini link reset anda {$host}/reset_password/{$tokenGen} . Link token ini akan berakhir dalam 5 menit",
-                ];
-        
-                Mail::to($input['email'])
-                    ->send(new MailNotify($data));
-                return view('forms.sent');
+        $input = $request->validate([
+            'email' => 'required|email:dns|min:2|max:255|'
+        ], [
+            'email.required' => 'Input email harus diisi'
+        ]);
+        $emailExists = Accounts::where('email', $input['email'])->exists();
+        if ($emailExists) {
+            $host = '127.0.0.1:8000';
+            if (!(str_contains(request()->getHttpHost(), '$host'))) {
+                $host = request()->getHttpHost();
             }
+            
+            if (Accounts::where('email', $input['email'])->first()->account_type_fk == 1) {
+                return redirect()->back()->withErrors(['error' => 'Bila admin salah/lupa password silahkan reset di database'])->withInput();
+            } else if (Accounts::where('email', $input['email'])->first()->account_type_fk == 3) {
+                return redirect()->back()->withErrors(['error' => 'Bila pegawai salah/lupa password silahkan hubungi mitra terkait.'])->withInput();
+            }
+            $tokenGen = Faker::create()->regexify('[A-Za-z0-9]{30}');
 
-            return redirect()->back()->withErrors(['error' => 'Email tidak ditemukan.'])->withInput();
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Input email harus diisi!'])->withInput();
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
+            // if ($request->getHost())
+            Tokens::create([
+                'token' => $tokenGen, 
+                'account_fk' => Accounts::where('email', $input['email'])->first()->id, 
+                'requested_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            $data = [
+                'subject' => 'Agroinvity',
+                'body' => "Ini link reset anda {$host}/reset_password/{$tokenGen} . Link token ini akan berakhir dalam 5 menit",
+            ];
+    
+            Mail::to($input['email'])
+                ->send(new MailNotify($data));
+            return view('forms.sent');
         }
+        // try {
+
+        //     return redirect()->back()->withErrors(['error' => 'Email tidak ditemukan.'])->withInput();
+        // } catch (\Exception $e) {
+        //     return redirect()->back()->withErrors(['error' => 'Input email harus diisi!'])->withInput();
+        // } catch (ValidationException $e) {
+        //     return redirect()->back()->withErrors($e->errors())->withInput();
+        // }
     }
 
     public function checkToken($token)
