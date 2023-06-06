@@ -173,6 +173,10 @@ class AccountController extends Controller
             ]);
             $emailExists = Accounts::where('email', $input['email'])->exists();
             if ($emailExists) {
+                $host = '127.0.0.1:8000';
+                if (request()->getHostHttp()) {
+                    $host = request()->getHostHttp();
+                }
                 
                 if (Accounts::where('email', $input['email'])->first()->account_type_fk == 1) {
                     return redirect()->back()->withErrors(['error' => 'Bila admin salah/lupa password silahkan reset di database'])->withInput();
@@ -189,7 +193,7 @@ class AccountController extends Controller
                 ]);
                 $data = [
                     'subject' => 'Agroinvity',
-                    'body' => "Ini link reset anda 127.0.0.1:8000/reset_password/{$tokenGen} . Link token ini akan berakhir dalam 5 menit",
+                    'body' => "Ini link reset anda {$host}/reset_password/{$tokenGen} . Link token ini akan berakhir dalam 5 menit",
                 ];
         
                 Mail::to($input['email'])

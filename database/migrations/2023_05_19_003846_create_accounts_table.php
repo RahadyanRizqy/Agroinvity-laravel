@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->string("fullname", 255);
-            $table->string("email", 255)->unique();
+            $table->string("email", 255);
             $table->string("password", 255);
             $table->bigInteger("phone_number");
             $table->boolean("status")->default(true);
