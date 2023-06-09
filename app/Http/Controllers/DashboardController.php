@@ -31,6 +31,13 @@ class DashboardController extends Controller
             if (Auth::user()->account_type_fk == 3) {
                 $toId = Accounts::with('parentAcc')->find(Auth::id())->parentAcc->id;
             }
+
+            $omzetx = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->get()->first()->total;
+            $prosx = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
+            $ProsOmzet = abs($prosx - $omzetx);
+
+            $omzetY = Products::select(DB::raw('SUM(price_per_qty*sold_products) as total'))->where('account_fk', $toId)->get()->first()->total;
+
             $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->get()->first()->total;
             $pros2 = Products::select(DB::raw('SUM(sold_products) as total'))->where('account_fk', $toId)->get()->first()->total;
             
@@ -94,6 +101,7 @@ class DashboardController extends Controller
                             ->whereRaw("DATE_FORMAT(updated_at, '%Y-%m') = '{$currentMonth}'")
                             ->groupBy('updated_at')
                             ->get();
+            $lineResult = $lineResult;
     
             $lineDates = [];
             $lineValues = [];
@@ -133,9 +141,9 @@ class DashboardController extends Controller
                 'lossPercent' => $lossPercent,
                 'prosPercent' => $prosPercent,
                 'pros2' => $pros2,
-                'pros' => $pros,
+                'pros' => $ProsOmzet,
                 'loss' => $loss,
-                'omzetTotal' => $omzetTotal,
+                'omzetTotal' => $omzetY,
                 'dates' => $lineDates,
                 'lineChart' => $lineValues,
             ]);
@@ -464,6 +472,12 @@ class DashboardController extends Controller
         $currentMonth = Carbon::now()->format('Y-m');
         $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->p;
         $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->e;
+
+        $omzetx = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $id)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        $prosx = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $id)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+        $ProsOmzet = abs($prosx - $omzetx);
+
+        $omzetY = Products::select(DB::raw('SUM(price_per_qty*sold_products) as total'))->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->where('account_fk', $id)->get()->first()->total;
         
         $percentExp1 = Expenses::where('expense_type_fk', 1)
                         ->where('account_fk', Auth::id())
@@ -514,8 +528,8 @@ class DashboardController extends Controller
         return view('dashboard', 
         [
             'section' => 'report', 
-            'incomes' => $products, 
-            'expenses' => $expenses, 
+            'incomes' => $ProsOmzet, 
+            'expenses' => $omzetY, 
             'percentageChart' => $percentageChart, 
             'percentageArr' => $percentageArr, 
             'dates' => $lineDates, 
@@ -527,7 +541,12 @@ class DashboardController extends Controller
     public function printReport(Request $request) {
         if (!isset($request)) {
             $id = Auth::id();
+            
             $currentMonth = Carbon::now()->format('Y-m');
+            $omzetx = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $id)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+            $prosx = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $id)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+            $ProsOmzet = abs($prosx - $omzetx);
+            $omzetY = Products::select(DB::raw('SUM(price_per_qty*sold_products) as total'))->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->where('account_fk', $id)->get()->first()->total;
             $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->p;
             $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}' AND account_fk = $id")[0]->e;
             
@@ -581,8 +600,8 @@ class DashboardController extends Controller
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('section/report_print', 
             [
-                'incomes' => $products, 
-                'expenses' => $expenses, 
+                'incomes' => $ProsOmzet, 
+                'expenses' => $omzetY, 
                 'percentageChart' => $percentageChart, 
                 'percentageArr' => $percentageArr, 
                 'dates' => $lineDates, 
@@ -599,6 +618,10 @@ class DashboardController extends Controller
         $id = Auth::id();
         $dateFrom = Carbon::createFromFormat('d M Y', $input['from'])->format('Y-m-d');
         $dateTo = Carbon::createFromFormat('d M Y', $input['to'])->format('Y-m-d');
+        $omzetx = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $id)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+        $prosx = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $id)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+        $ProsOmzet = abs($prosx - $omzetx);
+        $omzetY = Products::select(DB::raw('SUM(price_per_qty*sold_products) as total'))->whereBetween('stored_at', [$dateFrom, $dateTo])->where('account_fk', $id)->get()->first()->total;
         $products = DB::select("SELECT SUM(sold_products*price_per_qty) as p FROM products WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->p;
         $expenses = DB::select("SELECT SUM(quantity*price_per_qty) as e FROM expenses WHERE stored_at BETWEEN '{$dateFrom}' AND '{$dateTo}' AND account_fk = $id;")[0]->e;
 

@@ -116,7 +116,8 @@ if (count($dates) == 1) {
                         </tr>
                         <tr>
                             <td>Total Jumlah Produk: {{$percentageArr[2]}}</td>
-                            <td>Pemasukan: Rp{{ array_sum($lineChart) ?? 0}}</td>
+                            {{-- <td>Pemasukan: Rp{{ array_sum($lineChart) ?? 0}}</td> --}}
+                            <td>Pemasukan: Rp{{ $incomes }}</td>
                         </tr>
                     </table>
                 </div>
