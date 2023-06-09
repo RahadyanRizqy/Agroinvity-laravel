@@ -733,7 +733,8 @@ class DashboardController extends Controller
 
             } else if ($action === 'omzet') {
                 // INSERT!
-                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $omzet = Products::select(DB::raw('SUM(price_per_qty*sold_products) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                // $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
                 if ($omzet == 0 || $omzet == null) {
                     $omzet = 0;
                 }
@@ -759,11 +760,13 @@ class DashboardController extends Controller
             } else if ($action === 'profit') {
                 // INSERT!
                 $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereBetween('stored_at', [$dateFrom, $dateTo])->get()->first()->total;
+                $ProsOmzet = abs($pros - $omzet);
                 if ($pros == 0 || $pros == null) {
                     $pros = 0;
                 }
                 DB::table('calculators')->insert([
-                    'histories' => "[Keuntungan: $pros]" . "({$input['from']} - {$input['to']})",
+                    'histories' => "[Keuntungan: $ProsOmzet]" . "({$input['from']} - {$input['to']})",
                     'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
@@ -834,7 +837,8 @@ class DashboardController extends Controller
 
             } else if ($action === 'omzet') {
                 // INSERT!
-                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                // $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $omzet = Products::select(DB::raw('SUM(price_per_qty*sold_products) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
                 if ($omzet == 0 || $omzet == null) {
                     $omzet = 0;
                 }
@@ -858,12 +862,14 @@ class DashboardController extends Controller
 
             } else if ($action === 'profit') {
                 // INSERT!
+                $omzet = Expenses::select(DB::raw('SUM(price_per_qty*quantity) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
                 $pros = Products::select(DB::raw('SUM(sold_products*price_per_qty) as total'))->where('account_fk', $toId)->whereRaw("DATE_FORMAT(stored_at, '%Y-%m') = '{$currentMonth}'")->get()->first()->total;
+                $ProsOmzet = abs($pros - $omzet);
                 if ($pros == 0 || $pros == null) {
                     $pros = 0;
                 }
                 DB::table('calculators')->insert([
-                    'histories' => "[Keuntungan: $pros] Bulan ini",
+                    'histories' => "[Keuntungan: $ProsOmzet] Bulan ini",
                     'account_fk' => $toId,
                 ]);
                 return redirect()->route('section.calculator');
